@@ -65,7 +65,16 @@ describe("runAction", () => {
     await writeFile(prPath, JSON.stringify({ commits: [{ sha: "abc1234" }] }), "utf8");
     const runtime = createRuntime({ "pr-json": prPath });
 
-    await expect(runAction(runtime)).rejects.toThrow("Invalid PR JSON: commits must be an array");
+    await expect(runAction(runtime)).rejects.toThrow("Invalid PR JSON: commits must be an array of objects with a string message and optional string sha.");
+  });
+
+  it("rejects invalid commits fixture shape", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "assisted-by-action-"));
+    const commitsPath = join(cwd, "commits.json");
+    await writeFile(commitsPath, JSON.stringify([{ sha: "abc1234" }]), "utf8");
+    const runtime = createRuntime({ "commits-json": commitsPath });
+
+    await expect(runAction(runtime)).rejects.toThrow("Invalid commits JSON: expected an array of objects with a string message and optional string sha.");
   });
 });
 

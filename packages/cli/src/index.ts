@@ -1,13 +1,21 @@
 #!/usr/bin/env node
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import {
   defaultPolicyConfig,
+  localInputErrorMessage,
+  parseJsonInput,
   parsePolicyYaml,
   renderMarkdownReport,
+  validateCommitsInput,
+  validateNewFilesInput,
   validatePolicyConfig,
+  validatePrInput,
   validatePullRequestInput,
   type CommitRecord,
+  type LocalInputValidationResult,
+  type LocalPrInput,
   type NewFileRecord
 } from "@assisted-by-guard/core";
 
@@ -20,11 +28,6 @@ interface CliIo {
 interface ParsedArgs {
   command: string[];
   options: Record<string, string | boolean>;
-}
-
-interface LocalPrInput {
-  commits: CommitRecord[];
-  newFiles: NewFileRecord[];
 }
 
 const defaultPolicyPath = ".github/assisted-by.yml";
@@ -196,56 +199,19 @@ async function loadPrInput(options: Record<string, string | boolean>, cwd: strin
 }
 
 async function readCommitsFile(path: string): Promise<CommitRecord[]> {
-  const value = await readJsonFile(path, "commits JSON");
-
-  if (!isCommitRecords(value)) {
-    throw new Error("Invalid commits JSON: expected an array of objects with a string message and optional string sha.");
-  }
-
-  return value;
+  return unwrapLocalInputResult(validateCommitsInput(await readJsonFile(path, "commits JSON")));
 }
 
 async function readNewFilesFile(path: string): Promise<NewFileRecord[]> {
-  const value = await readJsonFile(path, "new files JSON");
-
-  if (!isNewFileRecords(value)) {
-    throw new Error("Invalid new files JSON: expected an array of objects with string path and content fields.");
-  }
-
-  return value;
+  return unwrapLocalInputResult(validateNewFilesInput(await readJsonFile(path, "new files JSON")));
 }
 
 async function readPrFile(path: string): Promise<LocalPrInput> {
-  const value = await readJsonFile(path, "PR JSON");
-
-  if (!isRecord(value)) {
-    throw new Error("Invalid PR JSON: expected an object with commits and optional new_files arrays.");
-  }
-
-  const commits = value.commits;
-  const newFiles = value.new_files ?? value.newFiles ?? [];
-
-  if (!isCommitRecords(commits)) {
-    throw new Error("Invalid PR JSON: commits must be an array of objects with a string message and optional string sha.");
-  }
-
-  if (!isNewFileRecords(newFiles)) {
-    throw new Error("Invalid PR JSON: new_files must be an array of objects with string path and content fields.");
-  }
-
-  return { commits, newFiles };
+  return unwrapLocalInputResult(validatePrInput(await readJsonFile(path, "PR JSON")));
 }
 
 async function readJsonFile(path: string, label: string): Promise<unknown> {
-  try {
-    return JSON.parse(await readFile(path, "utf8")) as unknown;
-  } catch (error) {
-    if (error instanceof SyntaxError) {
-      throw new Error(`Invalid ${label}: file is not valid JSON.`);
-    }
-
-    throw error;
-  }
+  return unwrapLocalInputResult(parseJsonInput(await readFile(path, "utf8"), label));
 }
 
 function stringOption(options: Record<string, string | boolean>, key: string): string | undefined {
@@ -273,20 +239,12 @@ function isMissingFile(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
+function unwrapLocalInputResult<T>(result: LocalInputValidationResult<T>): T {
+  if (!result.ok) {
+    throw new Error(localInputErrorMessage(result));
+  }
 
-function isCommitRecords(value: unknown): value is CommitRecord[] {
-  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.message === "string" && optionalString(item.sha));
-}
-
-function isNewFileRecords(value: unknown): value is NewFileRecord[] {
-  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.path === "string" && typeof item.content === "string");
-}
-
-function optionalString(value: unknown): boolean {
-  return value === undefined || typeof value === "string";
+  return result.value;
 }
 
 function helpText(): string {
@@ -317,6 +275,14 @@ Examples:
   assisted-by render-comment --pr examples/fixtures/pr.strict-findings.json --policy examples/strict-policy.yml`;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+export function isCliEntrypoint(moduleUrl: string, argvPath: string | undefined): boolean {
+  return argvPath ? moduleUrl === pathToFileURL(argvPath).href : false;
+}
+
+function isEntrypoint(): boolean {
+  return isCliEntrypoint(import.meta.url, process.argv[1]);
+}
+
+if (isEntrypoint()) {
   process.exitCode = await run(process.argv.slice(2));
 }

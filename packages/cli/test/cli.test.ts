@@ -1,10 +1,17 @@
 import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
-import { run } from "../src/index.js";
+import { isCliEntrypoint, run } from "../src/index.js";
 
 describe("CLI", () => {
+  it("recognizes direct node execution by file URL", () => {
+    const entrypointPath = join(tmpdir(), "assisted-by", "dist", "index.js");
+
+    expect(isCliEntrypoint(pathToFileURL(entrypointPath).href, entrypointPath)).toBe(true);
+  });
+
   it("creates the default policy file", async () => {
     const cwd = await mkdtemp(join(tmpdir(), "assisted-by-"));
     const output: string[] = [];
@@ -174,6 +181,21 @@ accepted_tools:
 
     expect(code).toBe(1);
     expect(output.join("\n")).toContain("Invalid commits JSON");
+  });
+
+  it("fails safely when PR JSON has the wrong shape", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "assisted-by-"));
+    await writeFile(join(cwd, "pr.json"), JSON.stringify({ commits: [{ sha: "abc1234" }] }), "utf8");
+    const output: string[] = [];
+
+    const code = await run(["render-comment", "--pr", "pr.json"], {
+      cwd,
+      stdout: (message) => output.push(message),
+      stderr: (message) => output.push(message)
+    });
+
+    expect(code).toBe(1);
+    expect(output.join("\n")).toContain("Invalid PR JSON: commits must be an array of objects with a string message and optional string sha.");
   });
 
   it("fails safely when the policy is invalid", async () => {
