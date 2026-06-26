@@ -11,6 +11,8 @@ export interface SpdxIssue {
 }
 
 const spdxPattern = /SPDX-License-Identifier:\s*[A-Za-z0-9-.+()]+/;
+const sourceFilePattern =
+  /\.(c|cc|cpp|cs|css|go|h|hpp|java|js|jsx|kt|mjs|php|py|rb|rs|scss|sh|swift|ts|tsx|vue)$/i;
 
 export function validateNewFileSpdx(files: NewFileRecord[], config: PolicyConfig): SpdxIssue[] {
   if (!config.require_spdx_for_new_files) {
@@ -18,11 +20,16 @@ export function validateNewFileSpdx(files: NewFileRecord[], config: PolicyConfig
   }
 
   return files
+    .filter((file) => shouldRequireSpdx(file.path))
     .filter((file) => !hasSpdxHeader(file.content))
     .map((file) => ({
       path: file.path,
-      message: "New file is missing an SPDX-License-Identifier header."
+      message: "New source file is missing an SPDX-License-Identifier header."
     }));
+}
+
+export function shouldRequireSpdx(path: string): boolean {
+  return sourceFilePattern.test(path);
 }
 
 export function hasSpdxHeader(content: string): boolean {

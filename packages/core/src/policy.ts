@@ -85,6 +85,13 @@ export function validatePolicyConfig(input: unknown): PolicyValidationResult {
     });
   }
 
+  if (requireAiDisclosure && acceptedTools.length === 0) {
+    diagnostics.push({
+      level: "warning",
+      message: "accepted_tools is empty; disclosure trailers will be checked for presence but tool names cannot be validated."
+    });
+  }
+
   const config: PolicyConfig = {
     mode,
     require_ai_disclosure: requireAiDisclosure,

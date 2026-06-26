@@ -41,4 +41,17 @@ accepted_tools:
       message: "accepted_trailers must contain at least one trailer when require_ai_disclosure is true."
     });
   });
+
+  it("warns when disclosure is required but tool names cannot be validated", () => {
+    const result = validatePolicyConfig({
+      require_ai_disclosure: true,
+      accepted_trailers: ["Assisted-by"],
+      accepted_tools: []
+    });
+
+    expect(result.diagnostics).toContainEqual({
+      level: "warning",
+      message: "accepted_tools is empty; disclosure trailers will be checked for presence but tool names cannot be validated."
+    });
+  });
 });
