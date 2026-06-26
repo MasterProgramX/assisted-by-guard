@@ -1,0 +1,22 @@
+name: "Assisted-By Guard"
+description: "Check pull requests for deterministic AI-assistance disclosure policy compliance."
+author: "Assisted-By Guard contributors"
+inputs:
+  policy-path:
+    description: "Path to the policy file."
+    required: false
+    default: ".github/assisted-by.yml"
+  commits-json:
+    description: "Path to a JSON file containing commit records for this MVP."
+    required: false
+  new-files-json:
+    description: "Path to a JSON file containing new file records for this MVP."
+    required: false
+outputs:
+  ok:
+    description: "Whether the policy check passed."
+  report:
+    description: "Markdown report."
+runs:
+  using: "node20"
+  main: "dist/index.js"

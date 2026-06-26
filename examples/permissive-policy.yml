@@ -1,0 +1,11 @@
+mode: permissive
+require_ai_disclosure: false
+accepted_trailers:
+  - Assisted-by
+  - Generated-by
+forbid_ai_signed_off_by: true
+require_human_dco: false
+require_spdx_for_new_files: false
+accepted_tools:
+  - GitHub Copilot
+  - ChatGPT

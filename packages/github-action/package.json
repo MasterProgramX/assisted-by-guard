@@ -1,0 +1,18 @@
+{
+  "name": "@assisted-by-guard/github-action",
+  "version": "0.1.0",
+  "description": "Minimal GitHub Action wrapper for Assisted-By Guard.",
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run --passWithNoTests",
+    "test:unit": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1",
+    "@assisted-by-guard/core": "workspace:*"
+  }
+}

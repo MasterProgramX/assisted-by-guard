@@ -1,0 +1,26 @@
+{
+  "name": "assisted-by-guard",
+  "version": "0.1.0",
+  "description": "CLI for deterministic AI-assistance disclosure policy checks.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "assisted-by": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:unit": "vitest run"
+  },
+  "dependencies": {
+    "@assisted-by-guard/core": "workspace:*"
+  }
+}
