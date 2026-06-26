@@ -18,6 +18,7 @@ import {
   type LocalPrInput,
   type NewFileRecord
 } from "@assisted-by-guard/core";
+import { collectCommitsFromRange, collectPrInputFromRange } from "./git.js";
 
 interface CliIo {
   cwd: string;
@@ -37,7 +38,7 @@ export async function run(argv: string[], io: CliIo = defaultIo()): Promise<numb
   const [command, subcommand] = parsed.command;
 
   try {
-    if (!command || command === "help" || parsed.options.help) {
+    if (!command || command === "help") {
       io.stdout(helpText());
       return 0;
     }
@@ -60,7 +61,9 @@ export async function run(argv: string[], io: CliIo = defaultIo()): Promise<numb
 
     if (command === "check-pr" || command === "render-comment") {
       if (!hasPrInput(parsed.options)) {
-        throw new Error(`Expected explicit local input for ${command}: --pr <pr-json>, --commits <commits-json>, or --new-files <new-files-json>.`);
+        throw new Error(
+          `Expected explicit local input for ${command}: --range <git-range>, --pr <pr-json>, --commits <commits-json>, or --new-files <new-files-json>.`
+        );
       }
 
       const policy = await loadPolicy(parsed.options, io.cwd);
@@ -165,6 +168,13 @@ async function loadPolicy(options: Record<string, string | boolean>, cwd: string
 }
 
 async function loadCommits(options: Record<string, string | boolean>, cwd: string): Promise<CommitRecord[]> {
+  const range = rangeOption(options);
+
+  if (range) {
+    rejectMixedRangeInputs(options, ["input", "commits"]);
+    return collectCommitsFromRange(range, cwd);
+  }
+
   const commitsPath = stringOption(options, "commits");
 
   if (commitsPath) {
@@ -177,7 +187,7 @@ async function loadCommits(options: Record<string, string | boolean>, cwd: strin
     return [{ message: await readFile(resolve(cwd, inputPath), "utf8") }];
   }
 
-  throw new Error("Expected explicit commit input: --input <commit-message-file> or --commits <commits-json>.");
+  throw new Error("Expected explicit commit input: --range <git-range>, --input <commit-message-file>, or --commits <commits-json>.");
 }
 
 async function loadNewFiles(options: Record<string, string | boolean>, cwd: string): Promise<NewFileRecord[]> {
@@ -186,6 +196,13 @@ async function loadNewFiles(options: Record<string, string | boolean>, cwd: stri
 }
 
 async function loadPrInput(options: Record<string, string | boolean>, cwd: string): Promise<LocalPrInput> {
+  const range = rangeOption(options);
+
+  if (range) {
+    rejectMixedRangeInputs(options, ["pr", "commits", "new-files"]);
+    return collectPrInputFromRange(range, cwd);
+  }
+
   const prPath = stringOption(options, "pr");
 
   if (prPath) {
@@ -224,7 +241,7 @@ function hasOption(options: Record<string, string | boolean>, key: string): bool
 }
 
 function hasPrInput(options: Record<string, string | boolean>): boolean {
-  return hasOption(options, "pr") || hasOption(options, "commits") || hasOption(options, "new-files");
+  return hasOption(options, "range") || hasOption(options, "pr") || hasOption(options, "commits") || hasOption(options, "new-files");
 }
 
 function reportPolicyDiagnostics(policy: ReturnType<typeof validatePolicyConfig>, io: CliIo): boolean {
@@ -247,6 +264,28 @@ function unwrapLocalInputResult<T>(result: LocalInputValidationResult<T>): T {
   return result.value;
 }
 
+function rangeOption(options: Record<string, string | boolean>): string | undefined {
+  if (!hasOption(options, "range")) {
+    return undefined;
+  }
+
+  const range = stringOption(options, "range");
+
+  if (!range) {
+    throw new Error("Expected --range <git-range>.");
+  }
+
+  return range;
+}
+
+function rejectMixedRangeInputs(options: Record<string, string | boolean>, disallowedKeys: string[]): void {
+  const mixed = disallowedKeys.filter((key) => hasOption(options, key));
+
+  if (mixed.length > 0) {
+    throw new Error(`Use either --range or explicit input files, not both. Mixed options: ${mixed.map((key) => `--${key}`).join(", ")}.`);
+  }
+}
+
 function helpText(): string {
   return `assisted-by
 
@@ -256,22 +295,27 @@ Commands:
 
   check-commits --input <commit-message-file> [--policy <path>]
   check-commits --commits <commits-json> [--policy <path>]
-      Check explicit local commit data.
+  check-commits --range <git-range> [--policy <path>]
+      Check explicit local commit data or local git commit messages.
 
   check-pr --pr <pr-json> [--policy <path>]
   check-pr --commits <commits-json> [--new-files <new-files-json>] [--policy <path>]
-      Check explicit local PR fixture data. No GitHub API calls are made.
+  check-pr --range <git-range> [--policy <path>]
+      Check explicit local PR fixture data or a local git range. No GitHub API calls are made.
 
   policy doctor [--policy <path>]
       Validate policy syntax and option combinations.
 
   render-comment --pr <pr-json> [--policy <path>]
   render-comment --commits <commits-json> [--new-files <new-files-json>] [--policy <path>]
+  render-comment --range <git-range> [--policy <path>]
       Render deterministic Markdown report output from local data.
 
 Examples:
   assisted-by check-commits --input examples/fixtures/commit-message.txt
+  assisted-by check-commits --range main..HEAD --policy examples/advisory-policy.yml
   assisted-by check-pr --pr examples/fixtures/pr.valid.json --policy examples/advisory-policy.yml
+  assisted-by check-pr --range main..HEAD --policy examples/strict-policy.yml
   assisted-by render-comment --pr examples/fixtures/pr.strict-findings.json --policy examples/strict-policy.yml`;
 }
 

@@ -57,6 +57,49 @@ describe("CLI", () => {
     expect(output.join("\n")).toContain("Expected explicit commit input");
   });
 
+  it("fails safely when range is missing a value", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "assisted-by-"));
+    const output: string[] = [];
+
+    const code = await run(["check-commits", "--range"], {
+      cwd,
+      stdout: (message) => output.push(message),
+      stderr: (message) => output.push(message)
+    });
+
+    expect(code).toBe(1);
+    expect(output.join("\n")).toContain("Expected --range <git-range>.");
+  });
+
+  it("does not treat a missing range value as command help", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "assisted-by-"));
+    const output: string[] = [];
+
+    const code = await run(["check-commits", "--range", "--help"], {
+      cwd,
+      stdout: (message) => output.push(message),
+      stderr: (message) => output.push(message)
+    });
+
+    expect(code).toBe(1);
+    expect(output.join("\n")).toContain("Expected --range <git-range>.");
+  });
+
+  it("fails safely when range is mixed with explicit input files", async () => {
+    const cwd = await mkdtemp(join(tmpdir(), "assisted-by-"));
+    await writeFile(join(cwd, "commit.txt"), "Add thing\n\nSigned-off-by: Ada Lovelace <ada@example.com>\n", "utf8");
+    const output: string[] = [];
+
+    const code = await run(["check-commits", "--range", "main..HEAD", "--input", "commit.txt"], {
+      cwd,
+      stdout: (message) => output.push(message),
+      stderr: (message) => output.push(message)
+    });
+
+    expect(code).toBe(1);
+    expect(output.join("\n")).toContain("Use either --range or explicit input files, not both. Mixed options: --input.");
+  });
+
   it("fails safely when check-pr is missing explicit local data", async () => {
     const cwd = await mkdtemp(join(tmpdir(), "assisted-by-"));
     const output: string[] = [];

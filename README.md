@@ -13,7 +13,7 @@ Humans remain responsible for DCO and sign-off. AI tools must not be treated as 
 This repository currently contains an initial MVP structure:
 
 - `packages/core`: deterministic policy, trailer, SPDX, and Markdown report helpers
-- `packages/cli`: local CLI skeleton for explicit file inputs and fixtures
+- `packages/cli`: local CLI skeleton for explicit file inputs, fixtures, and git ranges
 - `packages/github-action`: minimal action wrapper for later workflow use
 - `examples`: permissive, advisory, and strict policy examples
 - `docs`: policy and usage notes
@@ -35,7 +35,9 @@ The CLI command is `assisted-by`.
 ```sh
 assisted-by init
 assisted-by check-commits --input examples/fixtures/commit-message.txt
+assisted-by check-commits --range main..HEAD --policy examples/advisory-policy.yml
 assisted-by check-pr --pr examples/fixtures/pr.valid.json --policy examples/advisory-policy.yml
+assisted-by check-pr --range main..HEAD --policy examples/strict-policy.yml
 assisted-by policy doctor --policy .github/assisted-by.yml
 assisted-by render-comment --pr examples/fixtures/pr.valid.json
 ```
