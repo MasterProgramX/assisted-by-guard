@@ -1,0 +1,6 @@
+Add disclosure policy docs
+
+Document the local policy flow for maintainers.
+
+Signed-off-by: Ada Lovelace <ada@example.com>
+Assisted-by: GitHub Copilot

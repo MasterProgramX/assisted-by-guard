@@ -1,0 +1,14 @@
+{
+  "commits": [
+    {
+      "sha": "def5678",
+      "message": "Add generated helper\n\nGenerated-by: Unlisted Tool"
+    }
+  ],
+  "new_files": [
+    {
+      "path": "src/generated-helper.ts",
+      "content": "export const generatedHelper = true;\n"
+    }
+  ]
+}

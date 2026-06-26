@@ -1,0 +1,6 @@
+[
+  {
+    "sha": "abc1234",
+    "message": "Add disclosure policy docs\n\nDocument the local policy flow for maintainers.\n\nSigned-off-by: Ada Lovelace <ada@example.com>\nAssisted-by: GitHub Copilot"
+  }
+]

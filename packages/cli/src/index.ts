@@ -22,6 +22,11 @@ interface ParsedArgs {
   options: Record<string, string | boolean>;
 }
 
+interface LocalPrInput {
+  commits: CommitRecord[];
+  newFiles: NewFileRecord[];
+}
+
 const defaultPolicyPath = ".github/assisted-by.yml";
 
 export async function run(argv: string[], io: CliIo = defaultIo()): Promise<number> {
@@ -51,8 +56,8 @@ export async function run(argv: string[], io: CliIo = defaultIo()): Promise<numb
     }
 
     if (command === "check-pr" || command === "render-comment") {
-      if (command === "check-pr" && !hasOption(parsed.options, "commits") && !hasOption(parsed.options, "new-files")) {
-        throw new Error("Expected --commits <commits-json> or --new-files <new-files-json> for check-pr.");
+      if (!hasPrInput(parsed.options)) {
+        throw new Error(`Expected explicit local input for ${command}: --pr <pr-json>, --commits <commits-json>, or --new-files <new-files-json>.`);
       }
 
       const policy = await loadPolicy(parsed.options, io.cwd);
@@ -60,9 +65,8 @@ export async function run(argv: string[], io: CliIo = defaultIo()): Promise<numb
         return 1;
       }
 
-      const commits = await loadCommits(parsed.options, io.cwd, true);
-      const newFiles = await loadNewFiles(parsed.options, io.cwd);
-      const result = validatePullRequestInput({ config: policy.config, commits, newFiles });
+      const prInput = await loadPrInput(parsed.options, io.cwd);
+      const result = validatePullRequestInput({ config: policy.config, commits: prInput.commits, newFiles: prInput.newFiles });
       io.stdout(renderMarkdownReport(result));
       return result.ok ? 0 : 1;
     }
@@ -157,11 +161,11 @@ async function loadPolicy(options: Record<string, string | boolean>, cwd: string
   }
 }
 
-async function loadCommits(options: Record<string, string | boolean>, cwd: string, allowEmpty = false): Promise<CommitRecord[]> {
+async function loadCommits(options: Record<string, string | boolean>, cwd: string): Promise<CommitRecord[]> {
   const commitsPath = stringOption(options, "commits");
 
   if (commitsPath) {
-    return readJsonFile<CommitRecord[]>(resolve(cwd, commitsPath));
+    return readCommitsFile(resolve(cwd, commitsPath));
   }
 
   const inputPath = stringOption(options, "input");
@@ -170,20 +174,78 @@ async function loadCommits(options: Record<string, string | boolean>, cwd: strin
     return [{ message: await readFile(resolve(cwd, inputPath), "utf8") }];
   }
 
-  if (allowEmpty) {
-    return [];
-  }
-
-  throw new Error("Expected --input <commit-message-file> or --commits <commits-json>.");
+  throw new Error("Expected explicit commit input: --input <commit-message-file> or --commits <commits-json>.");
 }
 
 async function loadNewFiles(options: Record<string, string | boolean>, cwd: string): Promise<NewFileRecord[]> {
   const filesPath = stringOption(options, "new-files");
-  return filesPath ? readJsonFile<NewFileRecord[]>(resolve(cwd, filesPath)) : [];
+  return filesPath ? readNewFilesFile(resolve(cwd, filesPath)) : [];
 }
 
-async function readJsonFile<T>(path: string): Promise<T> {
-  return JSON.parse(await readFile(path, "utf8")) as T;
+async function loadPrInput(options: Record<string, string | boolean>, cwd: string): Promise<LocalPrInput> {
+  const prPath = stringOption(options, "pr");
+
+  if (prPath) {
+    return readPrFile(resolve(cwd, prPath));
+  }
+
+  return {
+    commits: hasOption(options, "commits") ? await loadCommits(options, cwd) : [],
+    newFiles: await loadNewFiles(options, cwd)
+  };
+}
+
+async function readCommitsFile(path: string): Promise<CommitRecord[]> {
+  const value = await readJsonFile(path, "commits JSON");
+
+  if (!isCommitRecords(value)) {
+    throw new Error("Invalid commits JSON: expected an array of objects with a string message and optional string sha.");
+  }
+
+  return value;
+}
+
+async function readNewFilesFile(path: string): Promise<NewFileRecord[]> {
+  const value = await readJsonFile(path, "new files JSON");
+
+  if (!isNewFileRecords(value)) {
+    throw new Error("Invalid new files JSON: expected an array of objects with string path and content fields.");
+  }
+
+  return value;
+}
+
+async function readPrFile(path: string): Promise<LocalPrInput> {
+  const value = await readJsonFile(path, "PR JSON");
+
+  if (!isRecord(value)) {
+    throw new Error("Invalid PR JSON: expected an object with commits and optional new_files arrays.");
+  }
+
+  const commits = value.commits;
+  const newFiles = value.new_files ?? value.newFiles ?? [];
+
+  if (!isCommitRecords(commits)) {
+    throw new Error("Invalid PR JSON: commits must be an array of objects with a string message and optional string sha.");
+  }
+
+  if (!isNewFileRecords(newFiles)) {
+    throw new Error("Invalid PR JSON: new_files must be an array of objects with string path and content fields.");
+  }
+
+  return { commits, newFiles };
+}
+
+async function readJsonFile(path: string, label: string): Promise<unknown> {
+  try {
+    return JSON.parse(await readFile(path, "utf8")) as unknown;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`Invalid ${label}: file is not valid JSON.`);
+    }
+
+    throw error;
+  }
 }
 
 function stringOption(options: Record<string, string | boolean>, key: string): string | undefined {
@@ -193,6 +255,10 @@ function stringOption(options: Record<string, string | boolean>, key: string): s
 
 function hasOption(options: Record<string, string | boolean>, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(options, key);
+}
+
+function hasPrInput(options: Record<string, string | boolean>): boolean {
+  return hasOption(options, "pr") || hasOption(options, "commits") || hasOption(options, "new-files");
 }
 
 function reportPolicyDiagnostics(policy: ReturnType<typeof validatePolicyConfig>, io: CliIo): boolean {
@@ -207,15 +273,48 @@ function isMissingFile(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isCommitRecords(value: unknown): value is CommitRecord[] {
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.message === "string" && optionalString(item.sha));
+}
+
+function isNewFileRecords(value: unknown): value is NewFileRecord[] {
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.path === "string" && typeof item.content === "string");
+}
+
+function optionalString(value: unknown): boolean {
+  return value === undefined || typeof value === "string";
+}
+
 function helpText(): string {
   return `assisted-by
 
 Commands:
-  init
+  init [--policy <path>]
+      Write a starter policy file. Defaults to .github/assisted-by.yml.
+
   check-commits --input <commit-message-file> [--policy <path>]
-  check-pr [--commits <commits-json>] [--new-files <new-files-json>] [--policy <path>]
+  check-commits --commits <commits-json> [--policy <path>]
+      Check explicit local commit data.
+
+  check-pr --pr <pr-json> [--policy <path>]
+  check-pr --commits <commits-json> [--new-files <new-files-json>] [--policy <path>]
+      Check explicit local PR fixture data. No GitHub API calls are made.
+
   policy doctor [--policy <path>]
-  render-comment [--commits <commits-json>] [--new-files <new-files-json>] [--policy <path>]`;
+      Validate policy syntax and option combinations.
+
+  render-comment --pr <pr-json> [--policy <path>]
+  render-comment --commits <commits-json> [--new-files <new-files-json>] [--policy <path>]
+      Render deterministic Markdown report output from local data.
+
+Examples:
+  assisted-by check-commits --input examples/fixtures/commit-message.txt
+  assisted-by check-pr --pr examples/fixtures/pr.valid.json --policy examples/advisory-policy.yml
+  assisted-by render-comment --pr examples/fixtures/pr.strict-findings.json --policy examples/strict-policy.yml`;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -34,10 +34,10 @@ The CLI command is `assisted-by`.
 
 ```sh
 assisted-by init
-assisted-by check-commits --input commit-message.txt
-assisted-by check-pr --commits commits.json --new-files new-files.json
+assisted-by check-commits --input examples/fixtures/commit-message.txt
+assisted-by check-pr --pr examples/fixtures/pr.valid.json --policy examples/advisory-policy.yml
 assisted-by policy doctor --policy .github/assisted-by.yml
-assisted-by render-comment --commits commits.json
+assisted-by render-comment --pr examples/fixtures/pr.valid.json
 ```
 
 The default posture is advisory: report issues clearly without failing the run unless a repository chooses strict mode.

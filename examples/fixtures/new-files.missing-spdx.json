@@ -1,0 +1,6 @@
+[
+  {
+    "path": "src/generated-helper.ts",
+    "content": "export const generatedHelper = true;\n"
+  }
+]

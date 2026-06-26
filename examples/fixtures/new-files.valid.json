@@ -1,0 +1,6 @@
+[
+  {
+    "path": "src/example.ts",
+    "content": "// SPDX-License-Identifier: MIT\nexport const example = true;\n"
+  }
+]

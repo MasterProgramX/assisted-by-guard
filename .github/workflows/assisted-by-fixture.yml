@@ -1,0 +1,21 @@
+name: Assisted-By Guard Fixture
+
+on:
+  workflow_dispatch:
+
+jobs:
+  local-fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - uses: ./packages/github-action
+        with:
+          policy-path: examples/advisory-policy.yml
+          pr-json: examples/fixtures/pr.valid.json

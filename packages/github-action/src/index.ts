@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { pathToFileURL } from "node:url";
 import * as core from "@actions/core";
 import {
   defaultPolicyConfig,
@@ -10,37 +11,66 @@ import {
   type NewFileRecord
 } from "@assisted-by-guard/core";
 
-export async function runAction(): Promise<void> {
-  const policyPath = core.getInput("policy-path") || ".github/assisted-by.yml";
-  const commitsPath = core.getInput("commits-json");
-  const newFilesPath = core.getInput("new-files-json");
+interface ActionRuntime {
+  getInput: (name: string) => string;
+  setOutput: (name: string, value: string) => void;
+  setFailed: (message: string) => void;
+  warning: (message: string) => void;
+  writeSummary: (markdown: string) => Promise<void>;
+}
 
-  if (!commitsPath && !newFilesPath) {
-    throw new Error("Expected commits-json or new-files-json input for the MVP action wrapper.");
+interface LocalPrInput {
+  commits: CommitRecord[];
+  newFiles: NewFileRecord[];
+}
+
+export async function runAction(runtime: ActionRuntime = githubRuntime()): Promise<void> {
+  const policyPath = runtime.getInput("policy-path") || ".github/assisted-by.yml";
+  const prPath = runtime.getInput("pr-json");
+  const commitsPath = runtime.getInput("commits-json");
+  const newFilesPath = runtime.getInput("new-files-json");
+
+  if (!prPath && !commitsPath && !newFilesPath) {
+    throw new Error("Expected explicit local input: pr-json, commits-json, or new-files-json.");
   }
 
-  const config = await loadPolicy(policyPath);
-  const commits = commitsPath ? await readJsonFile<CommitRecord[]>(commitsPath) : [];
-  const newFiles = newFilesPath ? await readJsonFile<NewFileRecord[]>(newFilesPath) : [];
-  const result = validatePullRequestInput({ config, commits, newFiles });
+  if (prPath && (commitsPath || newFilesPath)) {
+    throw new Error("Use either pr-json or commits-json/new-files-json, not both.");
+  }
+
+  const config = await loadPolicy(policyPath, runtime);
+  const input = await loadInput({ prPath, commitsPath, newFilesPath });
+  const result = validatePullRequestInput({ config, commits: input.commits, newFiles: input.newFiles });
   const report = renderMarkdownReport(result);
 
-  core.setOutput("ok", String(result.ok));
-  core.setOutput("report", report);
-  await core.summary.addRaw(report).write();
+  runtime.setOutput("ok", String(result.ok));
+  runtime.setOutput("report", report);
+  await runtime.writeSummary(report);
 
   if (!result.ok) {
-    core.setFailed("Assisted-By Guard policy check failed.");
+    runtime.setFailed("Assisted-By Guard policy check failed.");
   }
 }
 
-async function loadPolicy(path: string) {
+function githubRuntime(): ActionRuntime {
+  return {
+    getInput: (name) => core.getInput(name),
+    setOutput: (name, value) => core.setOutput(name, value),
+    setFailed: (message) => core.setFailed(message),
+    warning: (message) => core.warning(message),
+    writeSummary: async (markdown) => {
+      await core.summary.addRaw(markdown).write();
+    }
+  };
+}
+
+async function loadPolicy(path: string, runtime: ActionRuntime) {
   try {
     const source = await readFile(path, "utf8");
     const result = validatePolicyConfig(parsePolicyYaml(source));
 
     for (const diagnostic of result.diagnostics) {
-      core.warning(diagnostic.message);
+      runtime.warning(diagnostic.message);
     }
 
     const errors = result.diagnostics.filter((diagnostic) => diagnostic.level === "error");
@@ -53,7 +83,7 @@ async function loadPolicy(path: string) {
     const missingDefaultPolicy = isMissingFile(error) && path === ".github/assisted-by.yml";
 
     if (missingDefaultPolicy) {
-      core.warning("Policy file was not found; using advisory defaults.");
+      runtime.warning("Policy file was not found; using advisory defaults.");
       return defaultPolicyConfig;
     }
 
@@ -61,14 +91,96 @@ async function loadPolicy(path: string) {
   }
 }
 
-async function readJsonFile<T>(path: string): Promise<T> {
-  return JSON.parse(await readFile(path, "utf8")) as T;
+async function loadInput(input: { prPath: string; commitsPath: string; newFilesPath: string }): Promise<LocalPrInput> {
+  if (input.prPath) {
+    return readPrFile(input.prPath);
+  }
+
+  return {
+    commits: input.commitsPath ? await readCommitsFile(input.commitsPath) : [],
+    newFiles: input.newFilesPath ? await readNewFilesFile(input.newFilesPath) : []
+  };
+}
+
+async function readPrFile(path: string): Promise<LocalPrInput> {
+  const value = await readJsonFile(path, "PR JSON");
+
+  if (!isRecord(value)) {
+    throw new Error("Invalid PR JSON: expected an object with commits and optional new_files arrays.");
+  }
+
+  const commits = value.commits;
+  const newFiles = value.new_files ?? value.newFiles ?? [];
+
+  if (!isCommitRecords(commits)) {
+    throw new Error("Invalid PR JSON: commits must be an array of objects with a string message and optional string sha.");
+  }
+
+  if (!isNewFileRecords(newFiles)) {
+    throw new Error("Invalid PR JSON: new_files must be an array of objects with string path and content fields.");
+  }
+
+  return { commits, newFiles };
+}
+
+async function readCommitsFile(path: string): Promise<CommitRecord[]> {
+  const value = await readJsonFile(path, "commits JSON");
+
+  if (!isCommitRecords(value)) {
+    throw new Error("Invalid commits JSON: expected an array of objects with a string message and optional string sha.");
+  }
+
+  return value;
+}
+
+async function readNewFilesFile(path: string): Promise<NewFileRecord[]> {
+  const value = await readJsonFile(path, "new files JSON");
+
+  if (!isNewFileRecords(value)) {
+    throw new Error("Invalid new files JSON: expected an array of objects with string path and content fields.");
+  }
+
+  return value;
+}
+
+async function readJsonFile(path: string, label: string): Promise<unknown> {
+  try {
+    return JSON.parse(await readFile(path, "utf8")) as unknown;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`Invalid ${label}: file is not valid JSON.`);
+    }
+
+    throw error;
+  }
 }
 
 function isMissingFile(error: unknown): boolean {
   return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
 }
 
-runAction().catch((error: unknown) => {
-  core.setFailed(error instanceof Error ? error.message : String(error));
-});
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isCommitRecords(value: unknown): value is CommitRecord[] {
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.message === "string" && optionalString(item.sha));
+}
+
+function isNewFileRecords(value: unknown): value is NewFileRecord[] {
+  return Array.isArray(value) && value.every((item) => isRecord(item) && typeof item.path === "string" && typeof item.content === "string");
+}
+
+function optionalString(value: unknown): boolean {
+  return value === undefined || typeof value === "string";
+}
+
+function isEntrypoint(): boolean {
+  return process.argv[1] ? import.meta.url === pathToFileURL(process.argv[1]).href : false;
+}
+
+if (isEntrypoint()) {
+  runAction().catch((error: unknown) => {
+    core.setFailed(error instanceof Error ? error.message : String(error));
+  });
+}

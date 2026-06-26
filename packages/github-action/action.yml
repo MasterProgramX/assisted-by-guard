@@ -3,20 +3,23 @@ description: "Check pull requests for deterministic AI-assistance disclosure pol
 author: "Assisted-By Guard contributors"
 inputs:
   policy-path:
-    description: "Path to the policy file."
+    description: "Path to the local Assisted-By Guard policy file."
     required: false
     default: ".github/assisted-by.yml"
+  pr-json:
+    description: "Path to a local PR fixture JSON file with commits and optional new_files arrays."
+    required: false
   commits-json:
-    description: "Path to a JSON file containing commit records for this MVP."
+    description: "Path to a local JSON array of commit records. Do not use with pr-json."
     required: false
   new-files-json:
-    description: "Path to a JSON file containing new file records for this MVP."
+    description: "Path to a local JSON array of new file records. Do not use with pr-json."
     required: false
 outputs:
   ok:
     description: "Whether the policy check passed."
   report:
-    description: "Markdown report."
+    description: "Deterministic Markdown report."
 runs:
   using: "node20"
   main: "dist/index.js"
