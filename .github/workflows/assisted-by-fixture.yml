@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: MasterProgramX/assisted-by-guard@v0.1.0
+      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.0
         with:
           policy-path: examples/advisory-policy.yml
           pr-json: examples/fixtures/pr.valid.json
