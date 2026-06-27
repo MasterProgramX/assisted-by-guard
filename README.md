@@ -74,7 +74,7 @@ jobs:
 
 When no explicit local JSON input is provided, the action reads pull request commits and files through GitHub's read-only API. It does not post comments, request write permissions, or mutate pull requests.
 
-See [`docs/github-action.md`](docs/github-action.md) for fixture mode, dogfooding mode, tagged usage, and bundle maintenance.
+See [`docs/github-action.md`](docs/github-action.md) for fixture mode, dogfooding mode, tagged usage, and bundle maintenance. Distribution tradeoffs for future root Action usage are documented in [`docs/ACTION_DISTRIBUTION.md`](docs/ACTION_DISTRIBUTION.md).
 
 ## Policy
 

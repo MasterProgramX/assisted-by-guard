@@ -12,6 +12,8 @@ Because this repository is a workspace, tagged workflows reference the action pa
 
 Tagged use supports explicit local input files and read-only `pull_request` event collection after a release tag is created. It does not infer AI usage and does not review code.
 
+For root Action and GitHub Marketplace tradeoffs, see [the Action distribution strategy](ACTION_DISTRIBUTION.md). No root Action path is currently supported.
+
 ## Inputs
 
 - `policy-path`: local policy file path. Defaults to `.github/assisted-by.yml`.
@@ -136,3 +138,5 @@ Before creating a release tag:
 - Keep the action no-secret, deterministic, and non-mutating unless a future release explicitly documents a new mode.
 
 See [the release checklist](RELEASE.md) for the full pre-tag process.
+
+See [the Action distribution strategy](ACTION_DISTRIBUTION.md) before changing the package path, adding root Action metadata, or preparing Marketplace work.

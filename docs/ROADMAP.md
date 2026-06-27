@@ -14,7 +14,7 @@ Assisted-By Guard stays focused on deterministic, non-accusatory policy checks f
 
 ## Possible v0.2.0 Work
 
-- Explore a GitHub Marketplace or root Action strategy.
+- Explore the root Action wrapper recommendation in [`ACTION_DISTRIBUTION.md`](ACTION_DISTRIBUTION.md) for a future v0.2.0 release.
 - Prepare an npm publishing plan for the CLI and core package.
 - Add more maintainer-oriented policy presets.
 - Improve release smoke-test automation for packaged action tags.
