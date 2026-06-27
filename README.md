@@ -114,6 +114,7 @@ Community and maintenance notes:
 
 - Security reporting: `SECURITY.md`
 - Code of conduct: `CODE_OF_CONDUCT.md`
+- Project status: [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md)
 - Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
 Release preparation notes live in [`docs/RELEASE.md`](docs/RELEASE.md).

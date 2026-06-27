@@ -4,6 +4,8 @@ This roadmap is a lightweight guide for contributors. It is not a promise of dat
 
 Assisted-By Guard stays focused on deterministic, non-accusatory policy checks for AI-assistance disclosure and DCO-style human accountability.
 
+For the current maturity snapshot, see [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+
 ## v0.1.x Maintenance
 
 - Improve step-summary wording and report readability.
