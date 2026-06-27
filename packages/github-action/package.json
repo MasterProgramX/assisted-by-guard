@@ -4,15 +4,19 @@
   "description": "Minimal GitHub Action wrapper for Assisted-By Guard.",
   "type": "module",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && pnpm run bundle",
+    "bundle": "pnpm --filter @assisted-by-guard/core build && esbuild src/entrypoint.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/index.cjs --legal-comments=none && node scripts/trim-bundle-trailing-whitespace.mjs",
     "test": "vitest run --passWithNoTests",
     "test:unit": "vitest run --passWithNoTests"
   },
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@assisted-by-guard/core": "workspace:*"
+  },
+  "devDependencies": {
+    "esbuild": "0.21.5"
   }
 }

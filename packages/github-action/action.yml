@@ -1,5 +1,5 @@
 name: "Assisted-By Guard"
-description: "Check pull requests for deterministic AI-assistance disclosure policy compliance."
+description: "Run deterministic AI-assistance disclosure policy checks from local inputs or pull_request events."
 author: "Assisted-By Guard contributors"
 inputs:
   policy-path:
@@ -15,6 +15,10 @@ inputs:
   new-files-json:
     description: "Path to a local JSON array of new file records. Do not use with pr-json."
     required: false
+  github-token:
+    description: "GitHub token used for read-only pull_request event collection when local JSON inputs are not provided."
+    required: false
+    default: "${{ github.token }}"
 outputs:
   ok:
     description: "Whether the policy check passed."
@@ -22,4 +26,4 @@ outputs:
     description: "Deterministic Markdown report."
 runs:
   using: "node20"
-  main: "dist/index.js"
+  main: "dist/index.cjs"

@@ -1,5 +1,4 @@
 import { readFile } from "node:fs/promises";
-import { pathToFileURL } from "node:url";
 import * as core from "@actions/core";
 import {
   defaultPolicyConfig,
@@ -17,9 +16,12 @@ import {
   type LocalPrInput,
   type NewFileRecord
 } from "@assisted-by-guard/core";
+import { collectPullRequestEventInput, type FetchFunction } from "./github-pr.js";
 
 interface ActionRuntime {
   getInput: (name: string) => string;
+  getEnv: (name: string) => string | undefined;
+  fetch: FetchFunction;
   setOutput: (name: string, value: string) => void;
   setFailed: (message: string) => void;
   warning: (message: string) => void;
@@ -31,17 +33,14 @@ export async function runAction(runtime: ActionRuntime = githubRuntime()): Promi
   const prPath = runtime.getInput("pr-json");
   const commitsPath = runtime.getInput("commits-json");
   const newFilesPath = runtime.getInput("new-files-json");
-
-  if (!prPath && !commitsPath && !newFilesPath) {
-    throw new Error("Expected explicit local input: pr-json, commits-json, or new-files-json.");
-  }
+  const githubToken = runtime.getInput("github-token");
 
   if (prPath && (commitsPath || newFilesPath)) {
     throw new Error("Use either pr-json or commits-json/new-files-json, not both.");
   }
 
   const config = await loadPolicy(policyPath, runtime);
-  const input = await loadInput({ prPath, commitsPath, newFilesPath });
+  const input = await loadInput({ prPath, commitsPath, newFilesPath, githubToken, runtime, requireSpdx: config.require_spdx_for_new_files });
   const result = validatePullRequestInput({ config, commits: input.commits, newFiles: input.newFiles });
   const report = renderMarkdownReport(result);
 
@@ -57,6 +56,8 @@ export async function runAction(runtime: ActionRuntime = githubRuntime()): Promi
 function githubRuntime(): ActionRuntime {
   return {
     getInput: (name) => core.getInput(name),
+    getEnv: (name) => process.env[name],
+    fetch: (url, init) => fetch(url, init),
     setOutput: (name, value) => core.setOutput(name, value),
     setFailed: (message) => core.setFailed(message),
     warning: (message) => core.warning(message),
@@ -66,7 +67,7 @@ function githubRuntime(): ActionRuntime {
   };
 }
 
-async function loadPolicy(path: string, runtime: ActionRuntime) {
+async function loadPolicy(path: string, runtime: Pick<ActionRuntime, "warning">) {
   try {
     const source = await readFile(path, "utf8");
     const result = validatePolicyConfig(parsePolicyYaml(source));
@@ -93,15 +94,33 @@ async function loadPolicy(path: string, runtime: ActionRuntime) {
   }
 }
 
-async function loadInput(input: { prPath: string; commitsPath: string; newFilesPath: string }): Promise<LocalPrInput> {
+async function loadInput(input: {
+  prPath: string;
+  commitsPath: string;
+  newFilesPath: string;
+  githubToken: string;
+  runtime: ActionRuntime;
+  requireSpdx: boolean;
+}): Promise<LocalPrInput> {
   if (input.prPath) {
     return readPrFile(input.prPath);
   }
 
-  return {
-    commits: input.commitsPath ? await readCommitsFile(input.commitsPath) : [],
-    newFiles: input.newFilesPath ? await readNewFilesFile(input.newFilesPath) : []
-  };
+  if (input.commitsPath || input.newFilesPath) {
+    return {
+      commits: input.commitsPath ? await readCommitsFile(input.commitsPath) : [],
+      newFiles: input.newFilesPath ? await readNewFilesFile(input.newFilesPath) : []
+    };
+  }
+
+  return collectPullRequestEventInput({
+    token: input.githubToken,
+    eventPath: input.runtime.getEnv("GITHUB_EVENT_PATH"),
+    repository: input.runtime.getEnv("GITHUB_REPOSITORY"),
+    apiUrl: input.runtime.getEnv("GITHUB_API_URL"),
+    fetcher: input.runtime.fetch,
+    includeNewFileContents: input.requireSpdx
+  });
 }
 
 async function readPrFile(path: string): Promise<LocalPrInput> {
@@ -130,14 +149,4 @@ function unwrapLocalInputResult<T>(result: LocalInputValidationResult<T>): T {
   }
 
   return result.value;
-}
-
-function isEntrypoint(): boolean {
-  return process.argv[1] ? import.meta.url === pathToFileURL(process.argv[1]).href : false;
-}
-
-if (isEntrypoint()) {
-  runAction().catch((error: unknown) => {
-    core.setFailed(error instanceof Error ? error.message : String(error));
-  });
 }

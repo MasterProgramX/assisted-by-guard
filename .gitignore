@@ -7,3 +7,8 @@ coverage/
 *.tsbuildinfo
 tmp/
 temp/
+
+# Committed GitHub Action runtime bundle for tagged releases.
+!packages/github-action/dist/
+packages/github-action/dist/*
+!packages/github-action/dist/index.cjs

@@ -6,6 +6,8 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "pnpm -r build",
+    "build:action": "pnpm --filter @assisted-by-guard/github-action build",
+    "check:action-bundle": "pnpm build:action && git diff --exit-code -- packages/github-action/dist/index.cjs",
     "test": "pnpm -r build && pnpm -r test:unit",
     "lint": "eslint .",
     "check": "pnpm lint && pnpm test && pnpm build"

@@ -1,12 +1,14 @@
 # GitHub Action
 
-The initial action wrapper is intentionally small. It accepts explicit local JSON file inputs, reads the local policy file, renders a Markdown report, writes the job summary, and sets outputs.
+The action wrapper is intentionally small. It accepts explicit local JSON file inputs or, when those are absent, reads pull request data from the GitHub Actions `pull_request` event in read-only mode. It reads the local policy file, renders a Markdown report, writes the job summary, and sets outputs.
 
-It does not call the GitHub API, post comments, mutate pull requests, require secrets, or use telemetry.
+It does not post comments, mutate pull requests, require configured secrets, or use telemetry.
 
-The MVP action package is source-first: `action.yml` points at generated `dist/` output, but this scaffold does not commit built action artifacts. Local workflow use in this repository must install dependencies and run `pnpm build` before the local `uses: ./packages/github-action` step.
+It is not an AI detector and not an AI PR reviewer. It checks explicit disclosure and accountability rules without accusing contributors.
 
-External tagged use, such as `uses: owner/assisted-by-guard@v1`, should wait for a packaged release that includes a bundled action entrypoint.
+The action runtime is bundled into `packages/github-action/dist/index.cjs` so release tags can run without asking users to install workspace dependencies. The bundle is generated from the TypeScript source and committed intentionally as the JavaScript Action entrypoint.
+
+Tagged use supports explicit local input files and read-only `pull_request` event collection. It does not infer AI usage and does not review code.
 
 ## Inputs
 
@@ -14,12 +16,15 @@ External tagged use, such as `uses: owner/assisted-by-guard@v1`, should wait for
 - `pr-json`: local PR fixture JSON file with `commits` and optional `new_files` arrays.
 - `commits-json`: local JSON array of commit records. Do not use with `pr-json`.
 - `new-files-json`: local JSON array of new file records. Do not use with `pr-json`.
+- `github-token`: GitHub token for read-only `pull_request` event collection. Defaults to `${{ github.token }}`.
 
-At least one of `pr-json`, `commits-json`, or `new-files-json` is required. `pr-json` cannot be combined with the split input files.
+Explicit local inputs take precedence. If `pr-json` is provided, the action uses it. Otherwise, if `commits-json` or `new-files-json` are provided, the action uses those split local files. If no local JSON input is provided, the action attempts read-only `pull_request` event collection.
+
+`pr-json` cannot be combined with the split input files.
 
 ## Local Fixture Workflow
 
-The repository includes `.github/workflows/assisted-by-fixture.yml` as a manual workflow that runs the action against checked-in fixtures:
+The repository includes `.github/workflows/assisted-by-fixture.yml` as a manual workflow that runs the committed local action bundle against checked-in fixtures:
 
 ```yaml
 name: Assisted-By Guard Fixture
@@ -32,26 +37,72 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
       - uses: ./packages/github-action
         with:
           policy-path: examples/advisory-policy.yml
           pr-json: examples/fixtures/pr.valid.json
 ```
 
-This is a local fixture check, not PR data collection. Future versions can add richer pull request data collection while keeping the validation core deterministic.
+This is a local fixture check, not PR event collection.
+
+## Pull Request Workflow
+
+For pull request workflows, give the action only read permissions:
+
+```yaml
+name: Assisted-By Guard
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  assisted-by:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: owner/assisted-by-guard@v1
+        with:
+          policy-path: .github/assisted-by.yml
+```
+
+When no local JSON input is provided, the action reads the event file from `GITHUB_EVENT_PATH`, lists pull request commits, and lists pull request files through the GitHub REST API. It downloads contents only for newly added source-like files when `require_spdx_for_new_files` is enabled.
+
+Pull request content is treated as untrusted input. The action does not execute code from the pull request, does not run shell commands based on pull request data, does not log token values, and does not print file contents.
+
+## Tagged Usage With Local Inputs
+
+After a release tag includes the committed bundle, workflows can also reference the action by tag while providing explicit local input files:
+
+```yaml
+- uses: owner/assisted-by-guard@v1
+  with:
+    policy-path: .github/assisted-by.yml
+    pr-json: .github/assisted-by-pr.json
+```
+
+That example assumes the workflow creates or checks in `.github/assisted-by-pr.json`.
+
+## Bundle Maintenance
+
+Run the action bundle build before tagging:
+
+```sh
+pnpm build:action
+pnpm check:action-bundle
+```
+
+If `packages/github-action/src/`, `packages/core/src/`, or action dependencies change, regenerate and review `packages/github-action/dist/index.cjs`.
 
 ## Release Checklist
 
 Before users can consume this action by tag:
 
-- Add a bundling step that produces a self-contained `packages/github-action/dist/index.js`.
-- Decide whether generated action runtime files are committed for releases.
-- Verify a tagged workflow with `uses: owner/assisted-by-guard@<tag>`.
+- Run `pnpm install --frozen-lockfile`.
+- Run `pnpm test`, `pnpm build`, and `pnpm lint`.
+- Run `pnpm check:action-bundle` and commit an updated `packages/github-action/dist/index.cjs` when it changes.
+- Verify a tagged workflow with explicit local input files and `uses: owner/assisted-by-guard@<tag>`.
 - Keep the action no-secret, deterministic, and non-mutating unless a future release explicitly documents a new mode.

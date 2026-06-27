@@ -14,11 +14,11 @@ This repository currently contains an initial MVP structure:
 
 - `packages/core`: deterministic policy, trailer, SPDX, and Markdown report helpers
 - `packages/cli`: local CLI skeleton for explicit file inputs, fixtures, and git ranges
-- `packages/github-action`: minimal action wrapper for later workflow use
+- `packages/github-action`: bundled action wrapper for explicit local input files and read-only PR event collection
 - `examples`: permissive, advisory, and strict policy examples
 - `docs`: policy and usage notes
 
-No live GitHub API calls, PR mutation, telemetry, secrets, or network-dependent runtime behavior are included in the MVP.
+The core package and CLI remain network-free. The GitHub Action can optionally use read-only GitHub API calls in `pull_request` workflows to collect commit messages and newly added source files. No PR mutation, comments, telemetry, configured secrets, or AI/API integration are included in the MVP.
 
 ## Install
 

@@ -50,6 +50,10 @@ importers:
       '@assisted-by-guard/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      esbuild:
+        specifier: 0.21.5
+        version: 0.21.5
 
 packages:
 
