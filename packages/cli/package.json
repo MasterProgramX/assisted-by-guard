@@ -4,6 +4,15 @@
   "description": "CLI for deterministic AI-assistance disclosure policy checks.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasterProgramX/assisted-by-guard.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/MasterProgramX/assisted-by-guard#readme",
+  "bugs": {
+    "url": "https://github.com/MasterProgramX/assisted-by-guard/issues"
+  },
   "keywords": [
     "ai-disclosure",
     "dco",

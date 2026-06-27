@@ -8,7 +8,7 @@ It is not an AI detector and not an AI PR reviewer. It checks explicit disclosur
 
 The action runtime is bundled into `packages/github-action/dist/index.cjs` so release tags can run without asking users to install workspace dependencies. The bundle is generated from the TypeScript source and committed intentionally as the JavaScript Action entrypoint.
 
-Tagged use supports explicit local input files and read-only `pull_request` event collection. It does not infer AI usage and does not review code.
+Tagged use supports explicit local input files and read-only `pull_request` event collection after a release tag is created. It does not infer AI usage and does not review code.
 
 ## Inputs
 
@@ -47,7 +47,7 @@ This is a local fixture check, not PR event collection.
 
 ## Pull Request Workflow
 
-For pull request workflows, give the action only read permissions:
+After an explicit release tag is created, pull request workflows can reference the tagged action with only read permissions:
 
 ```yaml
 name: Assisted-By Guard
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: owner/assisted-by-guard@v0.1.0
+      - uses: MasterProgramX/assisted-by-guard@v0.1.0
         with:
           policy-path: .github/assisted-by.yml
 ```
@@ -104,7 +104,7 @@ The dogfooding policy is advisory. It shows maintainers the report without posti
 After a release tag includes the committed bundle, workflows can also reference the action by tag while providing explicit local input files:
 
 ```yaml
-- uses: owner/assisted-by-guard@v0.1.0
+- uses: MasterProgramX/assisted-by-guard@v0.1.0
   with:
     policy-path: .github/assisted-by.yml
     pr-json: .github/assisted-by-pr.json
@@ -130,7 +130,7 @@ Before creating a release tag:
 - Run `pnpm install --frozen-lockfile`.
 - Run `pnpm test`, `pnpm build`, and `pnpm lint`.
 - Run `pnpm check:action-bundle` and commit an updated `packages/github-action/dist/index.cjs` when it changes.
-- Verify a tagged workflow with explicit local input files and `uses: owner/assisted-by-guard@<tag>`.
+- Verify a tagged workflow with explicit local input files and `uses: MasterProgramX/assisted-by-guard@<tag>`.
 - Keep the action no-secret, deterministic, and non-mutating unless a future release explicitly documents a new mode.
 
 See [the release checklist](RELEASE.md) for the full pre-tag process.

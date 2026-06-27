@@ -7,7 +7,7 @@ Use this checklist before creating a release tag. Do not publish packages, creat
 - Confirm root and package versions are set to the intended release version.
 - Confirm the package manager remains pnpm.
 - Confirm package names, descriptions, licenses, keywords, bin fields, and package visibility are intentional.
-- Add repository metadata only after the canonical public GitHub repository owner is known.
+- Confirm repository metadata points to `https://github.com/MasterProgramX/assisted-by-guard`.
 
 ## Validation
 

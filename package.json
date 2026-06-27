@@ -6,6 +6,14 @@
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@9.15.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MasterProgramX/assisted-by-guard.git"
+  },
+  "homepage": "https://github.com/MasterProgramX/assisted-by-guard#readme",
+  "bugs": {
+    "url": "https://github.com/MasterProgramX/assisted-by-guard/issues"
+  },
   "engines": {
     "node": ">=20"
   },

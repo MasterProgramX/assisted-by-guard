@@ -50,7 +50,7 @@ See [`docs/cli.md`](docs/cli.md) for local fixture formats and local git range e
 
 ## GitHub Action
 
-The GitHub Action is bundled for tagged use and can run in a `pull_request` workflow with read-only permissions:
+The GitHub Action is bundled for tagged use. After an explicit `v0.1.0` tag is created, it can run in a `pull_request` workflow with read-only permissions:
 
 ```yaml
 name: Assisted-By Guard
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: owner/assisted-by-guard@v0.1.0
+      - uses: MasterProgramX/assisted-by-guard@v0.1.0
         with:
           policy-path: .github/assisted-by.yml
 ```
