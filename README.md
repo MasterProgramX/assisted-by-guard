@@ -102,7 +102,7 @@ This repository's live dogfooding policy is `.github/assisted-by.yml`.
 - The CLI and core package are local and deterministic. They do not call GitHub APIs or AI APIs.
 - The GitHub Action only collects pull request data in read-only mode. It does not post PR comments or create manual check runs.
 - Assisted-By Guard checks explicit policy evidence. It does not infer whether AI was used and does not review code quality.
-- The project is preparing its first v0.1.0 release candidate and should not be treated as broadly proven production infrastructure yet.
+- v0.1.0 is the first public release and should not be treated as broadly proven production infrastructure yet.
 
 ## Contributing
 

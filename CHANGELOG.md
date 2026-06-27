@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-06-27
 
-Initial release candidate scope:
+First public GitHub release.
 
 - Added a pnpm TypeScript workspace with `packages/core`, `packages/cli`, and `packages/github-action`.
 - Added deterministic commit trailer parsing for `Signed-off-by`, `Assisted-by`, `Co-authored-by`, and `Generated-by`.
@@ -22,3 +22,4 @@ Known limitations:
 - No AI detection, AI review, AI API calls, telemetry, secrets, PR comments, PR mutation, or GitHub App behavior.
 - The GitHub Action collects pull request data only in read-only mode and does not create manual check runs.
 - Policy checks are limited to explicit configured evidence and deterministic local or read-only event data.
+- npm packages are not published yet.
