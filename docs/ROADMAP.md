@@ -23,7 +23,7 @@ For the current maturity snapshot, see [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 
 ## Possible Future Work
 
-- Follow the npm publishing plan in [`NPM_PUBLISHING.md`](NPM_PUBLISHING.md) when the CLI and core packages are ready for a future manual npm release.
+- Maintain the npm publishing checklist in [`NPM_PUBLISHING.md`](NPM_PUBLISHING.md) for future manual package releases.
 - Add more maintainer-oriented policy presets.
 - Improve release smoke-test automation for packaged action tags.
 - Document migration guidance for repositories adopting DCO-style AI-assistance disclosure.

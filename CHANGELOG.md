@@ -13,7 +13,7 @@ Release for root GitHub Action usage.
 
 Known limitations:
 
-- npm packages are not published yet.
+- npm packages are published manually; no registry automation exists.
 - No AI detection, AI review, AI API calls, telemetry, secrets, PR comments, PR mutation, GitHub App behavior, or write permissions.
 
 ## 0.1.1 - 2026-06-27

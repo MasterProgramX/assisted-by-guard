@@ -1,10 +1,29 @@
-# npm Publishing Plan
+# npm Publishing
 
-No Assisted-By Guard packages have been published to npm yet. This document is a plan for a future, explicitly approved npm release. It is not a publish log, and it does not add tokens, secrets, registry automation, or package publishing workflows.
+Assisted-By Guard publishes the CLI and core packages to npm manually. This document records the current package strategy and the checklist for future npm releases. It does not add tokens, secrets, registry automation, or package publishing workflows.
 
-## Recommendation
+## Current Status
 
-Publish the CLI and core packages together when the project is ready for npm distribution:
+- Published packages:
+  - `assisted-by-guard`
+  - `@assisted-by-guard/core`
+- Current npm version: `0.2.0`
+- CLI install:
+
+  ```sh
+  npm install -g assisted-by-guard
+  assisted-by --help
+  ```
+
+- GitHub releases exist.
+- The GitHub Action is consumed from `MasterProgramX/assisted-by-guard@v0.2.0`.
+- The compatibility subpath Action remains available at `MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0`.
+- No npm token, registry secret, or publish automation exists.
+- The root workspace package is private and unpublished.
+- The GitHub Action package is private and unpublished.
+- The first npm publish was manual.
+
+## Package Strategy
 
 - `assisted-by-guard`: public CLI package from `packages/cli`.
 - `@assisted-by-guard/core`: public reusable validation library from `packages/core`.
@@ -12,16 +31,6 @@ Publish the CLI and core packages together when the project is ready for npm dis
 - `assisted-by-guard-workspace`: keep private and unpublished.
 
 This matches the current architecture: the CLI package depends on the core package, while the GitHub Action is distributed through GitHub release tags and its committed bundle.
-
-## Current Status
-
-- GitHub releases exist.
-- The GitHub Action is consumed from `MasterProgramX/assisted-by-guard@v0.2.0`.
-- The compatibility subpath Action remains available at `MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0`.
-- npm packages are not published.
-- No npm token, registry secret, or publish automation exists.
-- The root workspace package is private.
-- The GitHub Action package is private.
 
 ## Strategy Options
 
@@ -31,23 +40,23 @@ This matches the current architecture: the CLI package depends on the core packa
 | B - Publish CLI and core packages | Users install `assisted-by-guard`; the CLI depends on `@assisted-by-guard/core`. Core is also available for integrations. | Moderate and explicit. | Clear if both packages share the same version for early releases. | Strong. Matches the current workspace design. | Lowest practical risk if publish dry-runs are reviewed. |
 | C - Publish nothing for now | No npm maintenance yet. Users keep using source checkout and the GitHub Action. | Low. | None. | Fine for v0.1.x. | Limits CLI discoverability and installability. |
 
-Recommended path: Option B for a future release after one more explicit publish-readiness review. Keep Option C until that review is approved.
+Chosen path: Option B. Keep the root workspace and GitHub Action package unpublished.
 
 ## Package Audit
 
 ### `packages/cli`
 
 - Name: `assisted-by-guard`
-- Future publish intent: public.
+- Publish intent: public.
 - Binary: `assisted-by` points to `./dist/index.js`.
 - Package contents: `files` is limited to `dist`.
-- Dependencies: `@assisted-by-guard/core` currently uses the workspace protocol.
-- Before publishing, verify the packed manifest resolves the workspace dependency to a registry version.
+- Dependencies: `@assisted-by-guard/core` uses the workspace protocol in the repo.
+- Before publishing, verify the packed manifest resolves the workspace dependency to a registry version. Use `pnpm publish --access public`, not plain `npm publish`, so the workspace dependency is rewritten correctly.
 
 ### `packages/core`
 
 - Name: `@assisted-by-guard/core`
-- Future publish intent: public.
+- Publish intent: public.
 - Package contents: `files` is limited to `dist`.
 - Exports: package root exposes ESM build and types.
 - Runtime dependency: `yaml`.
@@ -55,20 +64,20 @@ Recommended path: Option B for a future release after one more explicit publish-
 ### `packages/github-action`
 
 - Name: `@assisted-by-guard/github-action`
-- Future publish intent: unpublished.
+- Publish intent: unpublished.
 - Keep `private: true`.
 - The Action is distributed by GitHub tag, not npm.
 
 ### Root package
 
 - Name: `assisted-by-guard-workspace`
-- Future publish intent: unpublished.
+- Publish intent: unpublished.
 - Keep `private: true`.
 - Keep `packageManager` set to pnpm.
 
 ## Pre-Publish Checklist
 
-Run these checks before any future npm release:
+Run these checks before any npm release:
 
 ```sh
 pnpm install --frozen-lockfile
@@ -94,14 +103,14 @@ Then inspect package metadata:
 
 ## Dry-Run Checklist
 
-Use dry-runs only. Do not publish during dry-run review.
+Use dry-runs before publishing.
 
 ```sh
 cd packages/core
-npm pack --dry-run
+pnpm publish --dry-run --access public
 
 cd ../cli
-npm pack --dry-run
+pnpm publish --dry-run --access public
 ```
 
 Review the output for both packages:
@@ -109,7 +118,7 @@ Review the output for both packages:
 - Only intended `dist` files and `package.json` should be included.
 - CLI package should include `dist/index.js` for the `assisted-by` binary.
 - Type declarations and source maps should be intentional.
-- The CLI dependency on `@assisted-by-guard/core` should resolve to the intended published version before the real publish.
+- The CLI dependency on `@assisted-by-guard/core` must resolve to the intended published version before the real publish.
 
 If a dry-run creates any `.tgz` file, delete it before committing. Do not commit package tarballs.
 
@@ -119,19 +128,17 @@ Before a real publish:
 
 - Use an npm account controlled by the maintainer or project.
 - Enable two-factor authentication according to the npm account policy.
-- Prefer manual publishing for the first npm release.
-- Do not add `NPM_TOKEN`, registry secrets, or publish workflows until the manual process is proven and explicitly approved.
+- Prefer manual publishing until registry automation is explicitly designed and approved.
+- Do not add `NPM_TOKEN`, registry secrets, or publish workflows until automation is explicitly approved.
 - Confirm package names are available on npm before announcing them.
 
-## Publish Order For Future Release
-
-If Option B is approved later:
+## Publish Order
 
 1. Publish `@assisted-by-guard/core`.
 2. Verify the package page and install metadata.
 3. Publish `assisted-by-guard`.
-4. Verify `npx assisted-by-guard --help` or equivalent local install behavior in a clean temporary project.
-5. Update release notes to say npm packages are published only after the packages are actually available.
+4. Verify `npx --no-install assisted-by --help` or equivalent local install behavior in a clean temporary project.
+5. Update docs to say npm packages are published only after the packages are actually available.
 
 Do not publish `@assisted-by-guard/github-action`. Do not publish the root workspace package.
 

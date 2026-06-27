@@ -25,7 +25,14 @@ This repository dogfoods its own action in advisory mode for pull requests. The 
 
 ## Install
 
-No npm package has been published yet. For now, use the CLI from a source checkout:
+The CLI package is available on npm:
+
+```sh
+npm install -g assisted-by-guard
+assisted-by --help
+```
+
+For source development, this repository uses pnpm:
 
 ```sh
 pnpm install
@@ -87,7 +94,7 @@ Existing `v0.1.1` users should keep using `MasterProgramX/assisted-by-guard/pack
 
 When no explicit local JSON input is provided, the action reads pull request commits and files through GitHub's read-only API. It does not post comments, request write permissions, or mutate pull requests.
 
-See [`docs/github-action.md`](docs/github-action.md) for fixture mode, dogfooding mode, tagged usage, and bundle maintenance. Distribution tradeoffs for future root Action usage are documented in [`docs/ACTION_DISTRIBUTION.md`](docs/ACTION_DISTRIBUTION.md).
+See [`docs/github-action.md`](docs/github-action.md) for fixture mode, dogfooding mode, tagged usage, and bundle maintenance. Action distribution and compatibility tradeoffs are documented in [`docs/ACTION_DISTRIBUTION.md`](docs/ACTION_DISTRIBUTION.md).
 
 ## Policy
 
@@ -131,7 +138,7 @@ Community and maintenance notes:
 
 Release preparation notes live in [`docs/RELEASE.md`](docs/RELEASE.md).
 
-npm publishing is planned but not yet performed; see [`docs/NPM_PUBLISHING.md`](docs/NPM_PUBLISHING.md).
+npm package details and future release notes live in [`docs/NPM_PUBLISHING.md`](docs/NPM_PUBLISHING.md).
 
 ## License
 

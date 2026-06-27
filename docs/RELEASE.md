@@ -48,7 +48,7 @@ Before tagging:
 
 ## npm Publishing
 
-GitHub releases and npm publishing are separate release activities. The GitHub release flow does not publish packages to npm.
+GitHub releases and npm publishing are separate release activities. npm packages are published manually, not through repository automation.
 
 Before any future npm release, follow [`NPM_PUBLISHING.md`](NPM_PUBLISHING.md). Do not add npm tokens, registry secrets, or publish automation unless that work is explicitly approved.
 

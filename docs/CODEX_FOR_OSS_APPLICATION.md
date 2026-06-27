@@ -100,8 +100,8 @@ Snapshot from repository inspection on 2026-06-27:
 ## Current Limitations
 
 - The project is new and should not claim adoption, maturity, downloads, users, or production usage.
-- npm packages are planned but not published.
-- The current tagged Action path is a package subpath, not a root Action path.
+- npm packages are published manually for `@assisted-by-guard/core` and `assisted-by-guard`.
+- The current tagged Action supports root usage, with the package subpath retained for compatibility.
 - No GitHub Marketplace listing exists.
 - No optional PR comment mode exists.
 - No GitHub App behavior exists.
@@ -116,7 +116,7 @@ Codex or API credits could help this project in concrete maintainer-facing ways:
 - Build safer optional step-summary or non-mutating report modes.
 - Improve test coverage for edge cases around DCO trailers, SPDX headers, and local input schemas.
 - Explore the root Action and GitHub Marketplace strategy documented in `docs/ACTION_DISTRIBUTION.md`.
-- Prepare npm publishing safely using `docs/NPM_PUBLISHING.md`.
+- Maintain npm publishing safety using `docs/NPM_PUBLISHING.md`.
 - Audit policy wording so reports remain clear, deterministic, and non-accusatory.
 
 Credits should not be used for hidden surveillance, AI authorship detection, contributor scoring, or undisclosed review behavior.
@@ -141,7 +141,7 @@ Before submitting any application:
 - Confirm the repository is still public.
 - Confirm latest CI is passing.
 - Confirm latest GitHub release and Action usage path.
-- Confirm no npm publish claim is made unless packages are actually published.
+- Confirm npm package availability claims match the current registry state.
 - Confirm no adoption metrics are claimed unless externally verifiable.
 - Confirm README and docs still state the project is not an AI detector or AI PR reviewer.
 - Confirm workflows do not request write permissions.

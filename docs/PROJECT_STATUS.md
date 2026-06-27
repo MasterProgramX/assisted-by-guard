@@ -46,7 +46,7 @@ uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
 - Telemetry.
 - Secrets or token-dependent behavior beyond the default read-only GitHub Actions token for PR event collection.
 - AI/API integration.
-- npm package publishing.
+- npm publishing automation.
 
 ## Safety Posture
 
@@ -57,7 +57,7 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 ## Current Limitations
 
 - The project is early and should not be treated as broadly proven production infrastructure.
-- npm packages are not published yet; the CLI is currently used from a source checkout.
+- npm packages are published, but the first publish was manual and no registry automation exists.
 - Existing `v0.1.1` users should keep using the packaged subpath Action unless they intentionally upgrade.
 - GitHub Marketplace listing has not been implemented.
 - Optional comment modes and richer step-summary modes are future work.
@@ -68,6 +68,7 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 - `v0.1.0`: first public GitHub release.
 - `v0.1.1`: patch release for Node 24 Action runtime metadata and release hygiene.
 - `v0.2.0`: root Action wrapper while preserving subpath compatibility.
+- `v0.2.0` npm packages: `@assisted-by-guard/core` and `assisted-by-guard`.
 - Packaged Action tag smoke test passed.
 - Community profile files, issue templates, roadmap, and release checklist added.
 - Issues #2, #3, #4, and #5 completed:
@@ -83,7 +84,7 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 - Continue improving report wording and maintainer-facing examples.
 - Add more integration coverage for CLI and Action behavior.
 - Continue smoke-testing root and subpath Action usage for future tags.
-- Follow the documented npm publishing plan when the CLI and core packages are ready for a future manual npm release.
+- Keep future npm publishing manual until registry automation is explicitly designed and reviewed.
 - Continue hardening DCO, trailer, and SPDX edge cases.
 
 ## Recommended Contributor Tasks
@@ -93,7 +94,7 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 - Improve step-summary wording while keeping reports non-accusatory.
 - Strengthen tests for malformed trailers, policy combinations, and SPDX edge cases.
 - Review `docs/ACTION_DISTRIBUTION.md` before proposing root Action or Marketplace changes.
-- Review `docs/NPM_PUBLISHING.md` before proposing npm packaging changes.
+- Review `docs/NPM_PUBLISHING.md` before proposing npm packaging or release-process changes.
 
 ## Notes For Future Applications
 

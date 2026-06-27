@@ -2,6 +2,23 @@
 
 The CLI command is `assisted-by`.
 
+## Install
+
+The CLI package is published as `assisted-by-guard` and installs the `assisted-by` command:
+
+```sh
+npm install -g assisted-by-guard
+assisted-by --help
+```
+
+For repository development, use pnpm from a source checkout:
+
+```sh
+pnpm install
+pnpm build
+pnpm test
+```
+
 ```sh
 assisted-by init
 assisted-by check-commits --input examples/fixtures/commit-message.txt
