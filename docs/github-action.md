@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.0
+      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
         with:
           policy-path: .github/assisted-by.yml
 ```
@@ -106,7 +106,7 @@ The dogfooding policy is advisory. It shows maintainers the report without posti
 After a release tag includes the committed bundle, workflows can also reference the action by tag while providing explicit local input files:
 
 ```yaml
-- uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.0
+- uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
   with:
     policy-path: .github/assisted-by.yml
     pr-json: .github/assisted-by-pr.json

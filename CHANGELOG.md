@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.1.1 - 2026-06-27
+
+Patch release for GitHub Action runtime and release hygiene.
+
+- Updated the GitHub Action metadata to use the Node 24 runtime.
+- Added explicit read-only permissions to CI and manual fixture workflows.
+- Updated release checklist guidance to smoke-test packaged action tag usage.
+- Documented the packaged action path for tagged workflow usage.
+
+Known limitations:
+
+- npm packages are not published yet.
+- No AI detection, AI review, AI API calls, telemetry, secrets, PR comments, PR mutation, GitHub App behavior, or write permissions.
+
 ## 0.1.0 - 2026-06-27
 
 First public GitHub release.

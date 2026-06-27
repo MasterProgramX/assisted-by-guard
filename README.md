@@ -50,7 +50,7 @@ See [`docs/cli.md`](docs/cli.md) for local fixture formats and local git range e
 
 ## GitHub Action
 
-The GitHub Action is bundled for tagged use from the `packages/github-action` path. After an explicit `v0.1.0` tag is created, it can run in a `pull_request` workflow with read-only permissions:
+The GitHub Action is bundled for tagged use from the `packages/github-action` path. It can run in a `pull_request` workflow with read-only permissions:
 
 ```yaml
 name: Assisted-By Guard
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.0
+      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
         with:
           policy-path: .github/assisted-by.yml
 ```
@@ -102,7 +102,7 @@ This repository's live dogfooding policy is `.github/assisted-by.yml`.
 - The CLI and core package are local and deterministic. They do not call GitHub APIs or AI APIs.
 - The GitHub Action only collects pull request data in read-only mode. It does not post PR comments or create manual check runs.
 - Assisted-By Guard checks explicit policy evidence. It does not infer whether AI was used and does not review code quality.
-- v0.1.0 is the first public release and should not be treated as broadly proven production infrastructure yet.
+- v0.1.1 is an early GitHub patch release and should not be treated as broadly proven production infrastructure yet.
 
 ## Contributing
 
