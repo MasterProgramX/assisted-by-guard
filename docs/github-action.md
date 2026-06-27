@@ -73,6 +73,32 @@ When no local JSON input is provided, the action reads the event file from `GITH
 
 Pull request content is treated as untrusted input. The action does not execute code from the pull request, does not run shell commands based on pull request data, does not log token values, and does not print file contents.
 
+## Dogfooding Workflow
+
+This repository uses its own bundled local action in `.github/workflows/assisted-by.yml`:
+
+```yaml
+name: Assisted-By Guard
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  assisted-by:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./packages/github-action
+        with:
+          policy-path: .github/assisted-by.yml
+```
+
+The dogfooding policy is advisory. It shows maintainers the report without posting comments or mutating pull requests.
+
 ## Tagged Usage With Local Inputs
 
 After a release tag includes the committed bundle, workflows can also reference the action by tag while providing explicit local input files:

@@ -20,6 +20,8 @@ This repository currently contains an initial MVP structure:
 
 The core package and CLI remain network-free. The GitHub Action can optionally use read-only GitHub API calls in `pull_request` workflows to collect commit messages and newly added source files. No PR mutation, comments, telemetry, configured secrets, or AI/API integration are included in the MVP.
 
+This repository dogfoods its own action in advisory mode for pull requests. The workflow is intentionally read-only and non-mutating while the project continues to mature.
+
 ## Install
 
 ```sh
@@ -62,6 +64,12 @@ accepted_tools:
 ```
 
 See `examples/` for permissive, advisory, and strict variants.
+
+This repository's live dogfooding policy is `.github/assisted-by.yml`.
+
+## Contributing
+
+See `CONTRIBUTING.md` and `docs/DCO_AND_AI.md` for human DCO/sign-off and AI assistance disclosure guidance.
 
 ## License
 
