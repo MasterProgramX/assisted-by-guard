@@ -1,0 +1,30 @@
+{
+  "commits": [
+    {
+      "sha": "mono001",
+      "message": "Add web package entrypoint\n\nSigned-off-by: Ada Lovelace <ada@example.com>\nAssisted-by: GitHub Copilot"
+    },
+    {
+      "sha": "mono002",
+      "message": "Add API package server\n\nSigned-off-by: Grace Hopper <grace@example.com>\nAssisted-by: ChatGPT"
+    }
+  ],
+  "new_files": [
+    {
+      "path": "packages/web/src/index.ts",
+      "content": "// SPDX-License-Identifier: MIT\nexport function renderApp() {\n  return \"web\";\n}\n"
+    },
+    {
+      "path": "packages/api/src/server.ts",
+      "content": "export function startServer() {\n  return \"api\";\n}\n"
+    },
+    {
+      "path": "packages/docs/README.md",
+      "content": "# Docs package\n\nThis documentation package does not require an SPDX source header.\n"
+    },
+    {
+      "path": "package.json",
+      "content": "{\n  \"private\": true,\n  \"workspaces\": [\"packages/*\"]\n}\n"
+    }
+  ]
+}

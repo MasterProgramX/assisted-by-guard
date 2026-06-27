@@ -1,0 +1,10 @@
+[
+  {
+    "sha": "mono001",
+    "message": "Add web package entrypoint\n\nSigned-off-by: Ada Lovelace <ada@example.com>\nAssisted-by: GitHub Copilot"
+  },
+  {
+    "sha": "mono002",
+    "message": "Add API package server\n\nSigned-off-by: Grace Hopper <grace@example.com>\nAssisted-by: ChatGPT"
+  }
+]

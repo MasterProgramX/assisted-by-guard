@@ -61,4 +61,29 @@ assisted-by check-pr --pr examples/fixtures/pr.valid.json --policy examples/dco-
 assisted-by check-pr --pr examples/fixtures/pr.valid.json --policy examples/security-sensitive-policy.yml
 ```
 
+## Monorepo Fixtures
+
+`examples/fixtures/monorepo/` contains a small fixture for repositories with multiple packages:
+
+- `packages/web/src/index.ts`: a new TypeScript source file with an SPDX header.
+- `packages/api/src/server.ts`: a new TypeScript source file without an SPDX header.
+- `packages/docs/README.md`: a new Markdown documentation file that should not trigger source-file SPDX checks.
+- `package.json`: workspace metadata that should not trigger source-file SPDX checks.
+
+The fixture uses valid human `Signed-off-by` trailers and accepted `Assisted-by` trailers so maintainers can focus on how source-like file detection behaves across package directories.
+
+Try the split local input form:
+
+```sh
+assisted-by check-pr --commits examples/fixtures/monorepo/commits.valid.json --new-files examples/fixtures/monorepo/new-files.mixed.json --policy examples/security-sensitive-policy.yml
+```
+
+Or render the combined PR fixture:
+
+```sh
+assisted-by render-comment --pr examples/fixtures/monorepo/pr.strict-findings.json --policy examples/security-sensitive-policy.yml
+```
+
+With `examples/security-sensitive-policy.yml`, the expected finding is one `missing-spdx` error for `packages/api/src/server.ts`. The web source file has an SPDX header, and the Markdown and package metadata files are not source-like files for the current SPDX rule.
+
 The CLI and core package are local and deterministic. The GitHub Action can also run these policies in a read-only workflow using `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`.
