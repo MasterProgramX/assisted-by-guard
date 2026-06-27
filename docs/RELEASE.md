@@ -34,8 +34,10 @@ Before tagging:
 - Run `pnpm check:action-bundle`.
 - Confirm `packages/github-action/dist/index.cjs` matches the current TypeScript source and dependencies.
 - Commit the updated bundle if source or action dependencies changed.
-- Confirm `action.yml` points to the committed bundled runtime.
-- Smoke-test tagged action usage with `MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
+- Confirm root `action.yml` points to `packages/github-action/dist/index.cjs`.
+- Confirm `packages/github-action/action.yml` points to `dist/index.cjs`.
+- Smoke-test tagged root action usage with `MasterProgramX/assisted-by-guard@<tag>` after root Action support is released.
+- Smoke-test tagged package action usage with `MasterProgramX/assisted-by-guard/packages/github-action@<tag>` for compatibility.
 
 ## Release Notes
 

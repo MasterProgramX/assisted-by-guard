@@ -8,11 +8,19 @@ It is not an AI detector and not an AI PR reviewer. It checks explicit disclosur
 
 The action runtime is bundled into `packages/github-action/dist/index.cjs` so release tags can run without asking users to install workspace dependencies. The bundle is generated from the TypeScript source and committed intentionally as the JavaScript Action entrypoint.
 
-Because this repository is a workspace, tagged workflows reference the action package path: `MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
+For `v0.1.x`, tagged workflows reference the action package path: `MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
+
+The `main` branch includes a root `action.yml` wrapper for the next release. After `v0.2.0` is tagged, root usage will be:
+
+```yaml
+uses: MasterProgramX/assisted-by-guard@v0.2.0
+```
+
+The packaged subpath Action remains available for compatibility.
 
 Tagged use supports explicit local input files and read-only `pull_request` event collection after a release tag is created. It does not infer AI usage and does not review code.
 
-For root Action and GitHub Marketplace tradeoffs, see [the Action distribution strategy](ACTION_DISTRIBUTION.md). No root Action path is currently supported.
+For root Action and GitHub Marketplace tradeoffs, see [the Action distribution strategy](ACTION_DISTRIBUTION.md).
 
 ## Inputs
 
@@ -28,7 +36,7 @@ Explicit local inputs take precedence. If `pr-json` is provided, the action uses
 
 ## Local Fixture Workflow
 
-The repository includes `.github/workflows/assisted-by-fixture.yml` as a manual workflow that runs the committed local action bundle against checked-in fixtures:
+The repository includes `.github/workflows/assisted-by-fixture.yml` as a manual workflow that runs both local Action metadata paths against checked-in fixtures:
 
 ```yaml
 name: Assisted-By Guard Fixture
@@ -37,7 +45,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  local-fixture:
+  root-fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          policy-path: examples/advisory-policy.yml
+          pr-json: examples/fixtures/pr.valid.json
+
+  package-fixture:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -47,11 +64,11 @@ jobs:
           pr-json: examples/fixtures/pr.valid.json
 ```
 
-This is a local fixture check, not PR event collection.
+These are local fixture checks, not PR event collection. They keep the root wrapper and packaged subpath Action smoke-tested from the repository checkout.
 
 ## Pull Request Workflow
 
-After an explicit release tag is created, pull request workflows can reference the tagged action with only read permissions:
+Current `v0.1.1` pull request workflows can reference the packaged Action with only read permissions:
 
 ```yaml
 name: Assisted-By Guard
@@ -69,6 +86,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
+        with:
+          policy-path: .github/assisted-by.yml
+```
+
+After `v0.2.0` is tagged, pull request workflows can use the root Action path:
+
+```yaml
+name: Assisted-By Guard
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  assisted-by:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: MasterProgramX/assisted-by-guard@v0.2.0
         with:
           policy-path: .github/assisted-by.yml
 ```
@@ -105,7 +144,7 @@ The dogfooding policy is advisory. It shows maintainers the report without posti
 
 ## Tagged Usage With Local Inputs
 
-After a release tag includes the committed bundle, workflows can also reference the action by tag while providing explicit local input files:
+Current `v0.1.1` workflows can also reference the packaged Action by tag while providing explicit local input files:
 
 ```yaml
 - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
@@ -115,6 +154,15 @@ After a release tag includes the committed bundle, workflows can also reference 
 ```
 
 That example assumes the workflow creates or checks in `.github/assisted-by-pr.json`.
+
+After `v0.2.0` is tagged, the equivalent root Action form will be:
+
+```yaml
+- uses: MasterProgramX/assisted-by-guard@v0.2.0
+  with:
+    policy-path: .github/assisted-by.yml
+    pr-json: .github/assisted-by-pr.json
+```
 
 ## Bundle Maintenance
 
@@ -134,7 +182,8 @@ Before creating a release tag:
 - Run `pnpm install --frozen-lockfile`.
 - Run `pnpm test`, `pnpm build`, and `pnpm lint`.
 - Run `pnpm check:action-bundle` and commit an updated `packages/github-action/dist/index.cjs` when it changes.
-- Verify a tagged workflow with explicit local input files and `uses: MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
+- Verify a tagged workflow with explicit local input files and `uses: MasterProgramX/assisted-by-guard@<tag>`.
+- Verify the compatibility path with `uses: MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
 - Keep the action no-secret, deterministic, and non-mutating unless a future release explicitly documents a new mode.
 
 See [the release checklist](RELEASE.md) for the full pre-tag process.

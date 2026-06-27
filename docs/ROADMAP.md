@@ -9,15 +9,20 @@ For the current maturity snapshot, see [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 ## v0.1.x Maintenance
 
 - Improve step-summary wording and report readability.
-- Add more real-world policy examples.
-- Add monorepo fixtures and local git range examples.
+- Continue maintaining real-world policy examples.
+- Continue maintaining monorepo fixtures and local git range examples.
 - Strengthen integration tests for CLI and GitHub Action usage.
 - Keep the bundled action runtime current with GitHub Actions platform changes.
 - Continue DCO/SPDX edge-case hardening and optional non-mutating summary improvements.
 
-## Possible v0.2.0 Work
+## v0.2.0 Release Candidate
 
-- Explore the root Action wrapper recommendation in [`ACTION_DISTRIBUTION.md`](ACTION_DISTRIBUTION.md) for a future v0.2.0 release.
+- Root Action wrapper support is prepared on `main`; see [`ACTION_DISTRIBUTION.md`](ACTION_DISTRIBUTION.md).
+- Before release, tag and smoke-test `MasterProgramX/assisted-by-guard@v0.2.0`.
+- Keep the `packages/github-action` subpath Action documented and smoke-tested for compatibility.
+
+## Possible Future Work
+
 - Follow the npm publishing plan in [`NPM_PUBLISHING.md`](NPM_PUBLISHING.md) when the CLI and core packages are ready for a future manual npm release.
 - Add more maintainer-oriented policy presets.
 - Improve release smoke-test automation for packaged action tags.

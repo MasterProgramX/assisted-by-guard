@@ -7,7 +7,16 @@ permissions:
   contents: read
 
 jobs:
-  local-fixture:
+  root-fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          policy-path: examples/advisory-policy.yml
+          pr-json: examples/fixtures/pr.valid.json
+
+  package-fixture:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

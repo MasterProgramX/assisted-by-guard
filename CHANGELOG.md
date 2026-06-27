@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## 0.2.0 - Unreleased
+
+Release candidate for root GitHub Action usage.
+
+- Added a thin root `action.yml` wrapper that points to the existing committed Action bundle.
+- Preserved the packaged subpath Action for compatibility.
+- Added metadata tests to keep root and package Action inputs, outputs, runtime, and bundle path aligned.
+- Updated the manual fixture workflow to smoke-test both the root Action and the packaged subpath Action from the repository checkout.
+
+Known limitations:
+
+- `v0.2.0` has not been tagged or released yet.
+- npm packages are not published yet.
+- No AI detection, AI review, AI API calls, telemetry, secrets, PR comments, PR mutation, GitHub App behavior, or write permissions.
+
 ## 0.1.1 - 2026-06-27
 
 Patch release for GitHub Action runtime and release hygiene.

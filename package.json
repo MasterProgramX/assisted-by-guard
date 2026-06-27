@@ -1,6 +1,6 @@
 {
   "name": "assisted-by-guard-workspace",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "DCO-style accountability for AI-assisted open-source contributions.",
   "private": true,
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@assisted-by-guard/core",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Deterministic validation core for Assisted-By Guard.",
   "type": "module",
   "license": "MIT",

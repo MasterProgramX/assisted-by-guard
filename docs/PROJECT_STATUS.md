@@ -2,14 +2,22 @@
 
 Assisted-By Guard is a new public OSS project for deterministic, non-accusatory policy checks around AI-assisted contributions and DCO-style human accountability.
 
-Current version: `v0.1.1`
+Current main-branch version: `v0.2.0` release candidate
+
+Latest GitHub release: `v0.1.1`
 
 Repository: https://github.com/MasterProgramX/assisted-by-guard
 
-Current GitHub Action usage:
+Current released GitHub Action usage:
 
 ```yaml
 uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
+```
+
+Planned root Action usage after `v0.2.0` is tagged:
+
+```yaml
+uses: MasterProgramX/assisted-by-guard@v0.2.0
 ```
 
 ## What Works Today
@@ -24,6 +32,8 @@ uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
 - CLI checks from explicit fixture files.
 - CLI checks from explicit local git ranges.
 - A bundled GitHub Action runtime with read-only `pull_request` event collection.
+- A root Action wrapper on `main` that points to the existing committed Action bundle.
+- A packaged subpath Action that remains available for compatibility.
 - Advisory dogfooding workflow in this repository.
 - Real-world policy examples and monorepo fixtures.
 
@@ -50,7 +60,8 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 
 - The project is early and should not be treated as broadly proven production infrastructure.
 - npm packages are not published yet; the CLI is currently used from a source checkout.
-- The supported Action path is the package subpath shown above. A root Action path is not currently supported.
+- The latest released Action path is the package subpath shown above.
+- Root Action usage should wait for the `v0.2.0` tag and release.
 - GitHub Marketplace listing has not been implemented.
 - Optional comment modes and richer step-summary modes are future work.
 - Policy checks are limited to explicit trailers, policy configuration, supplied local inputs, local git ranges, or read-only pull request event data.
@@ -59,6 +70,7 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 
 - `v0.1.0`: first public GitHub release.
 - `v0.1.1`: patch release for Node 24 Action runtime metadata and release hygiene.
+- `v0.2.0` release candidate on `main`: root Action wrapper while preserving subpath compatibility.
 - Packaged Action tag smoke test passed.
 - Community profile files, issue templates, roadmap, and release checklist added.
 - Issues #2, #3, #4, and #5 completed:
@@ -73,7 +85,7 @@ The CLI and core package are local and network-free. The GitHub Action can use G
 - Keep CI and the bundled Action runtime current.
 - Continue improving report wording and maintainer-facing examples.
 - Add more integration coverage for CLI and Action behavior.
-- Explore the documented root Action wrapper strategy for a future `v0.2.0`.
+- Tag and smoke-test `v0.2.0` when the release candidate is approved.
 - Follow the documented npm publishing plan when the CLI and core packages are ready for a future manual npm release.
 - Continue hardening DCO, trailer, and SPDX edge cases.
 
