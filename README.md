@@ -46,6 +46,36 @@ assisted-by render-comment --pr examples/fixtures/pr.valid.json
 
 The default posture is advisory: report issues clearly without failing the run unless a repository chooses strict mode.
 
+See [`docs/cli.md`](docs/cli.md) for local fixture formats and local git range examples.
+
+## GitHub Action
+
+The GitHub Action is bundled for tagged use and can run in a `pull_request` workflow with read-only permissions:
+
+```yaml
+name: Assisted-By Guard
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  assisted-by:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: owner/assisted-by-guard@v0.1.0
+        with:
+          policy-path: .github/assisted-by.yml
+```
+
+When no explicit local JSON input is provided, the action reads pull request commits and files through GitHub's read-only API. It does not post comments, request write permissions, or mutate pull requests.
+
+See [`docs/github-action.md`](docs/github-action.md) for fixture mode, dogfooding mode, tagged usage, and bundle maintenance.
+
 ## Policy
 
 The default policy path is `.github/assisted-by.yml`.
@@ -67,9 +97,18 @@ See `examples/` for permissive, advisory, and strict variants.
 
 This repository's live dogfooding policy is `.github/assisted-by.yml`.
 
+## Current Limitations
+
+- The CLI and core package are local and deterministic. They do not call GitHub APIs or AI APIs.
+- The GitHub Action only collects pull request data in read-only mode. It does not post PR comments or create manual check runs.
+- Assisted-By Guard checks explicit policy evidence. It does not infer whether AI was used and does not review code quality.
+- The project is preparing its first v0.1.0 release candidate and should not be treated as broadly proven production infrastructure yet.
+
 ## Contributing
 
 See `CONTRIBUTING.md` and `docs/DCO_AND_AI.md` for human DCO/sign-off and AI assistance disclosure guidance.
+
+Release preparation notes live in [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## License
 

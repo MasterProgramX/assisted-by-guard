@@ -1,9 +1,24 @@
 {
   "name": "@assisted-by-guard/github-action",
   "version": "0.1.0",
-  "description": "Minimal GitHub Action wrapper for Assisted-By Guard.",
+  "description": "Bundled read-only GitHub Action for deterministic Assisted-By Guard checks.",
+  "private": true,
   "type": "module",
   "license": "MIT",
+  "keywords": [
+    "ai-disclosure",
+    "dco",
+    "github-action",
+    "spdx",
+    "policy"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "action.yml",
+    "dist"
+  ],
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "scripts": {

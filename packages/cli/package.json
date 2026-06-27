@@ -4,6 +4,19 @@
   "description": "CLI for deterministic AI-assistance disclosure policy checks.",
   "type": "module",
   "license": "MIT",
+  "keywords": [
+    "ai-disclosure",
+    "dco",
+    "github-action",
+    "cli",
+    "spdx"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
   "bin": {
     "assisted-by": "./dist/index.js"
   },

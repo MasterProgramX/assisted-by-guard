@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: owner/assisted-by-guard@v1
+      - uses: owner/assisted-by-guard@v0.1.0
         with:
           policy-path: .github/assisted-by.yml
 ```
@@ -104,7 +104,7 @@ The dogfooding policy is advisory. It shows maintainers the report without posti
 After a release tag includes the committed bundle, workflows can also reference the action by tag while providing explicit local input files:
 
 ```yaml
-- uses: owner/assisted-by-guard@v1
+- uses: owner/assisted-by-guard@v0.1.0
   with:
     policy-path: .github/assisted-by.yml
     pr-json: .github/assisted-by-pr.json
@@ -125,10 +125,12 @@ If `packages/github-action/src/`, `packages/core/src/`, or action dependencies c
 
 ## Release Checklist
 
-Before users can consume this action by tag:
+Before creating a release tag:
 
 - Run `pnpm install --frozen-lockfile`.
 - Run `pnpm test`, `pnpm build`, and `pnpm lint`.
 - Run `pnpm check:action-bundle` and commit an updated `packages/github-action/dist/index.cjs` when it changes.
 - Verify a tagged workflow with explicit local input files and `uses: owner/assisted-by-guard@<tag>`.
 - Keep the action no-secret, deterministic, and non-mutating unless a future release explicitly documents a new mode.
+
+See [the release checklist](RELEASE.md) for the full pre-tag process.

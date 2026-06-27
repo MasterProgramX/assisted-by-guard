@@ -1,16 +1,29 @@
 {
   "name": "assisted-by-guard-workspace",
   "version": "0.1.0",
+  "description": "DCO-style accountability for AI-assisted open-source contributions.",
   "private": true,
   "type": "module",
+  "license": "MIT",
   "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "ai-disclosure",
+    "dco",
+    "github-action",
+    "cli",
+    "spdx",
+    "policy"
+  ],
   "scripts": {
     "build": "pnpm -r build",
     "build:action": "pnpm --filter @assisted-by-guard/github-action build",
     "check:action-bundle": "pnpm build:action && git diff --exit-code -- packages/github-action/dist/index.cjs",
     "test": "pnpm -r build && pnpm -r test:unit",
     "lint": "eslint .",
-    "check": "pnpm lint && pnpm test && pnpm build"
+    "check": "pnpm lint && pnpm test && pnpm build && pnpm check:action-bundle"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

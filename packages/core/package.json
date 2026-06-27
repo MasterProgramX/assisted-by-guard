@@ -4,6 +4,18 @@
   "description": "Deterministic validation core for Assisted-By Guard.",
   "type": "module",
   "license": "MIT",
+  "keywords": [
+    "ai-disclosure",
+    "dco",
+    "spdx",
+    "policy"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
