@@ -3,6 +3,9 @@ name: Assisted-By Guard Fixture
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   local-fixture:
     runs-on: ubuntu-latest

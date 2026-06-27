@@ -35,6 +35,7 @@ Before tagging:
 - Confirm `packages/github-action/dist/index.cjs` matches the current TypeScript source and dependencies.
 - Commit the updated bundle if source or action dependencies changed.
 - Confirm `action.yml` points to the committed bundled runtime.
+- Smoke-test tagged action usage with `MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
 
 ## Release Notes
 
