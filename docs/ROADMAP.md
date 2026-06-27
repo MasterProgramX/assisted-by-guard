@@ -15,10 +15,10 @@ For the current maturity snapshot, see [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
 - Keep the bundled action runtime current with GitHub Actions platform changes.
 - Continue DCO/SPDX edge-case hardening and optional non-mutating summary improvements.
 
-## v0.2.0 Release Candidate
+## v0.2.0
 
-- Root Action wrapper support is prepared on `main`; see [`ACTION_DISTRIBUTION.md`](ACTION_DISTRIBUTION.md).
-- Before release, tag and smoke-test `MasterProgramX/assisted-by-guard@v0.2.0`.
+- Root Action wrapper support is available; see [`ACTION_DISTRIBUTION.md`](ACTION_DISTRIBUTION.md).
+- Smoke-test `MasterProgramX/assisted-by-guard@v0.2.0` and compatibility subpath usage after release.
 - Keep the `packages/github-action` subpath Action documented and smoke-tested for compatibility.
 
 ## Possible Future Work

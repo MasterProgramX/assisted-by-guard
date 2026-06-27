@@ -16,7 +16,8 @@ This matches the current architecture: the CLI package depends on the core packa
 ## Current Status
 
 - GitHub releases exist.
-- The GitHub Action is consumed from `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`.
+- The GitHub Action is consumed from `MasterProgramX/assisted-by-guard@v0.2.0`.
+- The compatibility subpath Action remains available at `MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0`.
 - npm packages are not published.
 - No npm token, registry secret, or publish automation exists.
 - The root workspace package is private.

@@ -10,12 +10,12 @@ Assisted-By Guard helps open-source maintainers safely accept AI-assisted contri
 
 Repository: https://github.com/MasterProgramX/assisted-by-guard
 
-Current release: `v0.1.1`
+Current release: `v0.2.0`
 
 Current GitHub Action usage:
 
 ```yaml
-uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
+uses: MasterProgramX/assisted-by-guard@v0.2.0
 ```
 
 ## Problem Statement
@@ -85,8 +85,8 @@ Snapshot from repository inspection on 2026-06-27:
 - Public repository: `MasterProgramX/assisted-by-guard`
 - Description: `DCO-style accountability for AI-assisted open-source contributions.`
 - Topics: `ai-assisted`, `ai-governance`, `cli`, `dco`, `developer-tools`, `github-actions`, `maintainer-tools`, `open-source`, `pull-requests`, `spdx`, `supply-chain-security`, `typescript`
-- GitHub releases: `v0.1.0` and `v0.1.1`
-- Latest release: `v0.1.1`
+- GitHub releases: `v0.1.0`, `v0.1.1`, and `v0.2.0`
+- Latest release: `v0.2.0`
 - Recent CI runs on `main`: passing
 - Tagged Action smoke test: passed for packaged Action usage
 - Dogfooding workflow: active in advisory mode for pull requests
@@ -130,7 +130,7 @@ Use these as draft material only. Verify official application questions before s
 - It keeps humans responsible for DCO/sign-off and prevents AI tools from being treated as DCO signers.
 - It is read-only and non-mutating by default.
 - It does not call AI APIs, post PR comments, execute PR code, or require secrets for normal Action use.
-- The project already has a public `v0.1.1` GitHub release, passing CI, tagged Action smoke testing, dogfooding workflow, community files, examples, and documented limitations.
+- The project already has public GitHub releases, passing CI, tagged Action smoke testing, dogfooding workflow, community files, examples, and documented limitations.
 - Assistance would be used for documentation, fixtures, tests, release hardening, optional non-mutating summaries, and packaging readiness.
 
 ## Pre-Submission Checklist

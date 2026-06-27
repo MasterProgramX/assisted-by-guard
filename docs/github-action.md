@@ -8,15 +8,19 @@ It is not an AI detector and not an AI PR reviewer. It checks explicit disclosur
 
 The action runtime is bundled into `packages/github-action/dist/index.cjs` so release tags can run without asking users to install workspace dependencies. The bundle is generated from the TypeScript source and committed intentionally as the JavaScript Action entrypoint.
 
-For `v0.1.x`, tagged workflows reference the action package path: `MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
-
-The `main` branch includes a root `action.yml` wrapper for the next release. After `v0.2.0` is tagged, root usage will be:
+For `v0.2.0` and later, tagged workflows can reference the root Action path:
 
 ```yaml
 uses: MasterProgramX/assisted-by-guard@v0.2.0
 ```
 
-The packaged subpath Action remains available for compatibility.
+The `v0.1.x` releases use the action package path: `MasterProgramX/assisted-by-guard/packages/github-action@<tag>`.
+
+The packaged subpath Action also remains available for compatibility:
+
+```yaml
+uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
+```
 
 Tagged use supports explicit local input files and read-only `pull_request` event collection after a release tag is created. It does not infer AI usage and does not review code.
 
@@ -68,29 +72,7 @@ These are local fixture checks, not PR event collection. They keep the root wrap
 
 ## Pull Request Workflow
 
-Current `v0.1.1` pull request workflows can reference the packaged Action with only read permissions:
-
-```yaml
-name: Assisted-By Guard
-
-on:
-  pull_request:
-
-permissions:
-  contents: read
-  pull-requests: read
-
-jobs:
-  assisted-by:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
-        with:
-          policy-path: .github/assisted-by.yml
-```
-
-After `v0.2.0` is tagged, pull request workflows can use the root Action path:
+Current `v0.2.0` pull request workflows can reference the root Action with only read permissions:
 
 ```yaml
 name: Assisted-By Guard
@@ -108,6 +90,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: MasterProgramX/assisted-by-guard@v0.2.0
+        with:
+          policy-path: .github/assisted-by.yml
+```
+
+The packaged subpath Action remains available as a compatibility path:
+
+```yaml
+name: Assisted-By Guard
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  assisted-by:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
         with:
           policy-path: .github/assisted-by.yml
 ```
@@ -144,10 +148,10 @@ The dogfooding policy is advisory. It shows maintainers the report without posti
 
 ## Tagged Usage With Local Inputs
 
-Current `v0.1.1` workflows can also reference the packaged Action by tag while providing explicit local input files:
+Current `v0.2.0` workflows can also reference the root Action by tag while providing explicit local input files:
 
 ```yaml
-- uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
+- uses: MasterProgramX/assisted-by-guard@v0.2.0
   with:
     policy-path: .github/assisted-by.yml
     pr-json: .github/assisted-by-pr.json
@@ -155,10 +159,10 @@ Current `v0.1.1` workflows can also reference the packaged Action by tag while p
 
 That example assumes the workflow creates or checks in `.github/assisted-by-pr.json`.
 
-After `v0.2.0` is tagged, the equivalent root Action form will be:
+The equivalent compatibility path is:
 
 ```yaml
-- uses: MasterProgramX/assisted-by-guard@v0.2.0
+- uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
   with:
     policy-path: .github/assisted-by.yml
     pr-json: .github/assisted-by-pr.json

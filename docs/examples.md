@@ -86,4 +86,4 @@ assisted-by render-comment --pr examples/fixtures/monorepo/pr.strict-findings.js
 
 With `examples/security-sensitive-policy.yml`, the expected finding is one `missing-spdx` error for `packages/api/src/server.ts`. The web source file has an SPDX header, and the Markdown and package metadata files are not source-like files for the current SPDX rule.
 
-The CLI and core package are local and deterministic. The GitHub Action can also run these policies in a read-only workflow using `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`.
+The CLI and core package are local and deterministic. The GitHub Action can also run these policies in a read-only workflow using `MasterProgramX/assisted-by-guard@v0.2.0`.

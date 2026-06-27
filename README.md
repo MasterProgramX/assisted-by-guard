@@ -10,11 +10,11 @@ Humans remain responsible for DCO and sign-off. AI tools must not be treated as 
 
 ## Status
 
-This repository currently contains an early release-candidate structure:
+This repository currently contains an early release structure:
 
 - `packages/core`: deterministic policy, trailer, SPDX, and Markdown report helpers
 - `packages/cli`: local CLI skeleton for explicit file inputs, fixtures, and git ranges
-- `action.yml`: root GitHub Action wrapper prepared for the next `v0.2.0` release
+- `action.yml`: root GitHub Action wrapper for `v0.2.0` and later
 - `packages/github-action`: bundled action package for explicit local input files and read-only PR event collection
 - `examples`: permissive, advisory, and strict policy examples
 - `docs`: policy and usage notes
@@ -53,7 +53,7 @@ See [`docs/cli.md`](docs/cli.md) for local fixture formats and local git range e
 
 ## GitHub Action
 
-The current released GitHub Action is bundled for tagged use from the `packages/github-action` path. It can run in a `pull_request` workflow with read-only permissions:
+The current released GitHub Action supports root tagged usage. It can run in a `pull_request` workflow with read-only permissions:
 
 ```yaml
 name: Assisted-By Guard
@@ -70,20 +70,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
+      - uses: MasterProgramX/assisted-by-guard@v0.2.0
         with:
           policy-path: .github/assisted-by.yml
 ```
 
-The `main` branch now includes a thin root Action wrapper for the next release. After `v0.2.0` is tagged, the intended root usage is:
+The packaged subpath Action remains available for compatibility:
 
 ```yaml
-- uses: MasterProgramX/assisted-by-guard@v0.2.0
+- uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
   with:
     policy-path: .github/assisted-by.yml
 ```
 
-The packaged subpath Action remains available for compatibility.
+Existing `v0.1.1` users should keep using `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1` unless they intentionally upgrade.
 
 When no explicit local JSON input is provided, the action reads pull request commits and files through GitHub's read-only API. It does not post comments, request write permissions, or mutate pull requests.
 
@@ -115,8 +115,7 @@ This repository's live dogfooding policy is `.github/assisted-by.yml`.
 - The CLI and core package are local and deterministic. They do not call GitHub APIs or AI APIs.
 - The GitHub Action only collects pull request data in read-only mode. It does not post PR comments or create manual check runs.
 - Assisted-By Guard checks explicit policy evidence. It does not infer whether AI was used and does not review code quality.
-- `v0.2.0` is prepared on `main` but has not been tagged or released yet.
-- `v0.1.1` remains the latest released version until the next release is created.
+- `v0.2.0` is an early GitHub release and should be smoke-tested in each adopting repository.
 - This project is early and should not be treated as broadly proven production infrastructure yet.
 
 ## Contributing

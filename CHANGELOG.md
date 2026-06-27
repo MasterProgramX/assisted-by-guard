@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-06-27
 
-Release candidate for root GitHub Action usage.
+Release for root GitHub Action usage.
 
 - Added a thin root `action.yml` wrapper that points to the existing committed Action bundle.
 - Preserved the packaged subpath Action for compatibility.
@@ -13,7 +13,6 @@ Release candidate for root GitHub Action usage.
 
 Known limitations:
 
-- `v0.2.0` has not been tagged or released yet.
 - npm packages are not published yet.
 - No AI detection, AI review, AI API calls, telemetry, secrets, PR comments, PR mutation, GitHub App behavior, or write permissions.
 

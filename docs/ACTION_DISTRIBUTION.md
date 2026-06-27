@@ -1,18 +1,18 @@
 # GitHub Action Distribution Strategy
 
-Assisted-By Guard `v0.1.x` publishes its GitHub Action from the workspace package directory:
-
-```yaml
-uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1
-```
-
-This remains the supported `v0.1.x` usage path.
-
-The `main` branch now includes a thin root `action.yml` wrapper for the next release. After `v0.2.0` is tagged, the intended root Action usage is:
+Assisted-By Guard `v0.2.0` and later publish a root GitHub Action wrapper:
 
 ```yaml
 uses: MasterProgramX/assisted-by-guard@v0.2.0
 ```
+
+The packaged subpath Action remains available for compatibility:
+
+```yaml
+uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
+```
+
+For `v0.1.x`, users should keep using `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`.
 
 ## Current Layout
 
@@ -36,8 +36,8 @@ References:
 
 | Option | User experience | Marketplace compatibility | Maintenance burden | Monorepo cleanliness | Release complexity | v0.1.1 compatibility | Risk | CLI/core organization |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| A - Keep current subpath Action | Current users keep `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`; discoverability is less obvious than root usage. | Weak for Marketplace because the metadata file is not at the repository root. | Low. Existing bundle and tests stay as-is. | Strong. Workspace package boundaries stay clear. | Low. Current release checklist already covers the package bundle. | Full compatibility. | Low. No migration. | Strong. |
-| B - Add a root `action.yml` wrapper | Future users could use `MasterProgramX/assisted-by-guard@v0.2.0`; current subpath can remain supported. | Stronger, because the repository root exposes Action metadata. | Medium. Root metadata and package metadata must stay aligned. | Good because the root file is a thin wrapper to `packages/github-action/dist/index.cjs`. | Medium. Release smoke tests must cover both root and subpath usage during transition. | Compatible because the subpath remains documented and tested. | Medium. A bad wrapper could break first-run trust. | Strong because implementation remains a wrapper. |
+| A - Keep current subpath Action | `v0.1.x` users keep `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`; discoverability is less obvious than root usage. | Weak for Marketplace because the metadata file is not at the repository root. | Low. Existing bundle and tests stay as-is. | Strong. Workspace package boundaries stay clear. | Low. Current release checklist already covers the package bundle. | Full compatibility. | Low. No migration. | Strong. |
+| B - Add a root `action.yml` wrapper | Users can use `MasterProgramX/assisted-by-guard@v0.2.0`; current subpath can remain supported. | Stronger, because the repository root exposes Action metadata. | Medium. Root metadata and package metadata must stay aligned. | Good because the root file is a thin wrapper to `packages/github-action/dist/index.cjs`. | Medium. Release smoke tests must cover both root and subpath usage during transition. | Compatible because the subpath remains documented and tested. | Medium. A bad wrapper could break first-run trust. | Strong because implementation remains a wrapper. |
 | C - Move the Action package to the repo root | Root usage becomes natural, but the repository becomes Action-first. | Strong. | Medium to high. Build, package, docs, and workspace paths all move. | Weaker. CLI and core package organization becomes less obvious. | High. Many docs and tests would need updates. | Compatible only if the old subpath is preserved or clearly migrated. | High for little immediate benefit. | Weaker. |
 | D - Create a separate action-only repository | Clean Action consumer path such as `MasterProgramX/assisted-by-guard-action@v1`. | Strong for Marketplace. | High. Requires another repository, sync process, release coordination, and support surface. | Strong in this repo, but split ownership elsewhere. | High. Two repositories need coordinated release and smoke testing. | Compatible if current subpath remains. | Medium to high. More places to drift. | Strong here, weaker cross-repo. |
 
@@ -47,9 +47,9 @@ Keep Option A for v0.1.x and adopt Option B for v0.2.0.
 
 Do not move the Action package to the repository root. Do not create a separate action-only repository yet. The packaged subpath is valid, tested, and already released. The root wrapper is the smallest improvement for discoverability and possible Marketplace readiness because it preserves the workspace layout and keeps `packages/core`, `packages/cli`, and `packages/github-action` organized.
 
-## v0.2.0 Migration Plan
+## v0.2.0 Migration Notes
 
-Before tagging `v0.2.0`:
+For `v0.2.0` and later:
 
 1. Keep the root `action.yml` mirrored with the package Action inputs and outputs.
 2. Point the root metadata to the committed package bundle, `packages/github-action/dist/index.cjs`.
@@ -64,7 +64,7 @@ Before tagging `v0.2.0`:
    uses: MasterProgramX/assisted-by-guard/packages/github-action@v0.2.0
    ```
 
-5. Update README, `docs/github-action.md`, and release notes only after the root path is tagged and smoke-tested.
+5. Keep README, `docs/github-action.md`, and release notes aligned with the latest tagged Action paths.
 6. Keep permissions read-only in examples:
 
    ```yaml
@@ -78,7 +78,7 @@ Before tagging `v0.2.0`:
 ## Current Non-Goals
 
 - No Marketplace listing has been created.
-- The root Action wrapper is present on `main`, but root tagged usage should wait for a `v0.2.0` release.
+- Root Action usage is supported starting with `v0.2.0`.
 - No existing tag has been changed.
 - No PR comments, PR mutation, write permissions, telemetry, secrets, AI detection, AI review, or GitHub App behavior are part of this strategy.
 - v0.1.1 users should keep using `MasterProgramX/assisted-by-guard/packages/github-action@v0.1.1`.
