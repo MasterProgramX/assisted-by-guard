@@ -108,6 +108,12 @@ This repository's live dogfooding policy is `.github/assisted-by.yml`.
 
 See `CONTRIBUTING.md` and `docs/DCO_AND_AI.md` for human DCO/sign-off and AI assistance disclosure guidance.
 
+Community and maintenance notes:
+
+- Security reporting: `SECURITY.md`
+- Code of conduct: `CODE_OF_CONDUCT.md`
+- Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md)
+
 Release preparation notes live in [`docs/RELEASE.md`](docs/RELEASE.md).
 
 ## License

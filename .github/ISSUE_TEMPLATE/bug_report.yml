@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a CLI, GitHub Action, policy, or documentation bug.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please do not include secrets, tokens, private repository data, or sensitive file contents.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of Assisted-By Guard is affected?
+      options:
+        - GitHub Action
+        - CLI
+        - Core policy validation
+        - Local git range collection
+        - Documentation
+        - Examples or fixtures
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Include the release tag, commit SHA, or branch you tested.
+      placeholder: v0.1.1
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Include the command, workflow snippet, or minimal fixture shape needed to reproduce the issue.
+      placeholder: |
+        1. Run ...
+        2. Use policy ...
+        3. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include error text or a short report excerpt when useful. Avoid large logs and sensitive data.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add operating system, Node version, package manager version, or GitHub Actions runner details if relevant.

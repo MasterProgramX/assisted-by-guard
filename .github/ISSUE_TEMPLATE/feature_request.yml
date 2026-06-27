@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a focused improvement for maintainers or contributors.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement. Assisted-By Guard is deterministic and non-mutating by default. It is not an AI detector or AI PR reviewer.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What maintainer or contributor problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the smallest useful version of the feature.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Mention current workarounds or simpler approaches.
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Project boundaries
+      options:
+        - label: This does not require AI detection.
+        - label: This does not require AI code review.
+        - label: This does not require PR comments or mutation by default.
+        - label: This can work without secrets or telemetry.
+  - type: textarea
+    id: contribution
+    attributes:
+      label: Contribution interest
+      description: If you want to help implement or test this, say how.

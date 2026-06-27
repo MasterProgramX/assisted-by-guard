@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: CLI documentation
+    url: https://github.com/MasterProgramX/assisted-by-guard/blob/main/docs/cli.md
+    about: Read local fixture and git range usage examples.
+  - name: GitHub Action documentation
+    url: https://github.com/MasterProgramX/assisted-by-guard/blob/main/docs/github-action.md
+    about: Read workflow examples, permissions, and tagged action usage.
+  - name: Policy documentation
+    url: https://github.com/MasterProgramX/assisted-by-guard/blob/main/docs/policy.md
+    about: Read supported policy options and validation behavior.

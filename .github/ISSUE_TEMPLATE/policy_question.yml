@@ -1,0 +1,51 @@
+name: Policy question
+description: Ask about policy configuration, disclosure trailers, DCO compatibility, or SPDX checks.
+title: "[Policy]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for policy interpretation or configuration questions. Keep examples minimal and remove private repository data.
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - Human DCO sign-off
+        - Assisted-by or Generated-by trailers
+        - Accepted tools
+        - SPDX headers for new files
+        - Advisory vs strict mode
+        - GitHub Action usage
+        - CLI usage
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Policy goal
+      description: What behavior are you trying to encourage or validate?
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Current policy snippet
+      description: Paste only the relevant portion of `.github/assisted-by.yml`.
+      render: yaml
+  - type: textarea
+    id: result
+    attributes:
+      label: Current result or confusion
+      description: Share the relevant diagnostic or describe what is unclear.
+    validations:
+      required: true
+  - type: checkboxes
+    id: posture
+    attributes:
+      label: Desired posture
+      options:
+        - label: The policy should remain non-accusatory.
+        - label: The policy should remain deterministic.
+        - label: Humans remain responsible for DCO/sign-off.
