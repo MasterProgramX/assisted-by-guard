@@ -93,7 +93,7 @@ accepted_tools:
   - ChatGPT
 ```
 
-See `examples/` for permissive, advisory, and strict variants.
+See `examples/` and [`docs/examples.md`](docs/examples.md) for permissive, advisory, strict, and real-world starting points.
 
 This repository's live dogfooding policy is `.github/assisted-by.yml`.
 

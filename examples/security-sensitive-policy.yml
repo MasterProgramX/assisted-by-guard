@@ -1,0 +1,14 @@
+# For source-heavy projects that want stricter accountability and SPDX checks on new source files.
+# Enforces human DCO-style sign-off, configured disclosure trailers, and SPDX headers for new source-like files.
+# Does not review code security, detect AI authorship, or mutate pull requests.
+mode: strict
+require_ai_disclosure: true
+accepted_trailers:
+  - Assisted-by
+  - Generated-by
+forbid_ai_signed_off_by: true
+require_human_dco: true
+require_spdx_for_new_files: true
+accepted_tools:
+  - GitHub Copilot
+  - ChatGPT

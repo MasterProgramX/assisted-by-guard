@@ -1,0 +1,14 @@
+# For projects with an established DCO culture that want disclosure trailers to be present when policy requires them.
+# Enforces human Signed-off-by trailers, accepted AI-assistance disclosure trailers, and configured tool matching.
+# Does not treat AI tools as authors, reviewers, or DCO signers.
+mode: strict
+require_ai_disclosure: true
+accepted_trailers:
+  - Assisted-by
+  - Generated-by
+forbid_ai_signed_off_by: true
+require_human_dco: true
+require_spdx_for_new_files: false
+accepted_tools:
+  - GitHub Copilot
+  - ChatGPT

@@ -1,0 +1,14 @@
+# For a small or solo-maintainer project that wants transparency without blocking early contributions.
+# Enforces human DCO-style sign-off and keeps configured tools out of Signed-off-by trailers.
+# Does not require every contribution to disclose AI assistance or try to detect whether AI was used.
+mode: advisory
+require_ai_disclosure: false
+accepted_trailers:
+  - Assisted-by
+  - Generated-by
+forbid_ai_signed_off_by: true
+require_human_dco: true
+require_spdx_for_new_files: false
+accepted_tools:
+  - GitHub Copilot
+  - ChatGPT
