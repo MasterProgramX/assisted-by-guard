@@ -11,6 +11,7 @@ Assisted-By Guard stays focused on deterministic, non-accusatory policy checks f
 - Add monorepo fixtures and local git range examples.
 - Strengthen integration tests for CLI and GitHub Action usage.
 - Keep the bundled action runtime current with GitHub Actions platform changes.
+- Continue DCO/SPDX edge-case hardening and optional non-mutating summary improvements.
 
 ## Possible v0.2.0 Work
 
