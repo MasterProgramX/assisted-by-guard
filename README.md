@@ -24,6 +24,8 @@ This repository dogfoods its own action in advisory mode for pull requests. The 
 
 ## Install
 
+No npm package has been published yet. For now, use the CLI from a source checkout:
+
 ```sh
 pnpm install
 pnpm build
@@ -115,6 +117,8 @@ Community and maintenance notes:
 - Roadmap: [`docs/ROADMAP.md`](docs/ROADMAP.md)
 
 Release preparation notes live in [`docs/RELEASE.md`](docs/RELEASE.md).
+
+npm publishing is planned but not yet performed; see [`docs/NPM_PUBLISHING.md`](docs/NPM_PUBLISHING.md).
 
 ## License
 

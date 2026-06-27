@@ -44,6 +44,12 @@ Before tagging:
 - Confirm docs still state that Assisted-By Guard is not an AI detector and not an AI PR reviewer.
 - Confirm limitations are documented, including no PR comments or mutation by default.
 
+## npm Publishing
+
+GitHub releases and npm publishing are separate release activities. The v0.1.x GitHub release flow does not publish packages to npm.
+
+Before any future npm release, follow [`NPM_PUBLISHING.md`](NPM_PUBLISHING.md). Do not add npm tokens, registry secrets, or publish automation unless that work is explicitly approved.
+
 ## Final Git Checks
 
 - Confirm `git status` is clean except ignored files.

@@ -15,7 +15,7 @@ Assisted-By Guard stays focused on deterministic, non-accusatory policy checks f
 ## Possible v0.2.0 Work
 
 - Explore the root Action wrapper recommendation in [`ACTION_DISTRIBUTION.md`](ACTION_DISTRIBUTION.md) for a future v0.2.0 release.
-- Prepare an npm publishing plan for the CLI and core package.
+- Follow the npm publishing plan in [`NPM_PUBLISHING.md`](NPM_PUBLISHING.md) when the CLI and core packages are ready for a future manual npm release.
 - Add more maintainer-oriented policy presets.
 - Improve release smoke-test automation for packaged action tags.
 - Document migration guidance for repositories adopting DCO-style AI-assistance disclosure.
