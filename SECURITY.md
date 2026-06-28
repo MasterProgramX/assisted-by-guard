@@ -4,11 +4,12 @@ Assisted-By Guard is an early open-source project for deterministic policy check
 
 ## Supported Versions
 
-Security fixes are currently considered for the latest GitHub release and the `main` branch.
+Security fixes are currently considered for the latest GitHub release, the current npm packages, and the `main` branch. Critical fixes may be backported to older supported release lines when practical.
 
 | Version | Supported |
 | --- | --- |
-| 0.1.x | Yes |
+| 0.2.x | Yes |
+| 0.1.x | Security fixes only when practical |
 
 ## Reporting a Security Issue
 
@@ -35,4 +36,4 @@ Out of scope:
 - Vulnerabilities in unrelated third-party services.
 - Social engineering or spam reports.
 
-The project does not currently publish npm packages.
+The project currently publishes the `assisted-by-guard` CLI and `@assisted-by-guard/core` package on npm. The GitHub Action package remains private/unpublished.
